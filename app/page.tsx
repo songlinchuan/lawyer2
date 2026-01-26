@@ -2,17 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Phone,
-  MessageCircle,
-  X,
-  Check,
-  Scale,
-  BookOpen,
-  Shield,
-  ChevronRight,
-  Copy,
-} from "lucide-react";
+import { Phone, MessageCircle, X, ChevronRight, Copy } from "lucide-react";
 
 // --- 配置区域 ---
 const AVATAR_IMAGE = "/avatar.jpg";
@@ -137,10 +127,7 @@ export default function Portfolio() {
               onClick={() => setShowPhone(true)}
             />
 
-            {/* ↓↓↓ 抖音按钮区域 (已暂时隐藏) ↓↓↓ 
-               等你以后做好了，把下面的 {/* 和 * / 删掉，按钮就会回来了
-            */}
-
+            {/* ↓↓↓ 抖音按钮区域 (已暂时隐藏) ↓↓↓ */}
             {/* <SocialButton 
               icon={
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
@@ -430,4 +417,3 @@ function Modal({
     </div>
   );
 }
- 
