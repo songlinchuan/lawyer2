@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Phone, MessageCircle, X, ChevronRight, Copy } from "lucide-react";
 
 // --- 配置区域 ---
@@ -9,8 +9,8 @@ const AVATAR_IMAGE = "/avatar.jpg";
 const WECHAT_QR_IMAGE = "/wechat-qr.jpg"; 
 const PHONE_NUMBER = "15665792073";
 
-// --- 动画配置 ---
-const fadeInUp = {
+// --- 动画配置 (修复了类型报错) ---
+const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: { 
     opacity: 1, 
@@ -19,7 +19,7 @@ const fadeInUp = {
   }
 };
 
-const staggerContainer = {
+const staggerContainer: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -87,7 +87,6 @@ export default function Portfolio() {
             <p className="text-sm md:text-base text-gray-500 font-medium tracking-wide uppercase">
               中华人民共和国执业律师 <span className="mx-2">|</span> 民商事、刑事权益捍卫者
             </p>
-            {/* 修复点1：引号问题修复 */}
             <p className="text-xl text-gray-800 font-serif italic pt-2">&quot;诚心诚意，尽心尽力&quot;</p>
           </div>
 
@@ -122,7 +121,6 @@ export default function Portfolio() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <AnimatePresence mode="wait">
-              {/* 修复点2：移除了未使用的 index 变量 */}
               {casesData[activeTab].map((item) => (
                 <CaseCard 
                   key={item.title} 
@@ -153,7 +151,6 @@ export default function Portfolio() {
 
         {/* --- 5. Footer --- */}
         <motion.footer variants={fadeInUp} className="mt-32 pt-12 border-t border-gray-200 text-center space-y-4 pb-12">
-          {/* 修复点3：底部引号问题修复 */}
           <p className="text-lg font-serif italic text-gray-600">&quot;诚心诚意对待每一位当事人的委托，尽心尽力争取哪怕百分之一的可能。&quot;</p>
           <div className="text-sm text-gray-400">
             <p>—— 宋临川</p>
