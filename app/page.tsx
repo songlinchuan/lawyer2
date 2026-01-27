@@ -1,3 +1,10 @@
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: '宋临川律师 | 民商事与刑事法律服务',
+  description: '诚心诚意，尽心尽力。中华人民共和国执业律师。任何时候我都视委托如山，只为帮您争取最大的利益。',
+}
+
 "use client";
 
 import React, { useState } from "react";
