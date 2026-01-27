@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "宋临川律师 | 民商事刑事法律服务",
-  description: "宋临川律师个人官网。诚心诚意对待每一位当事人的委托，尽心尽力争取哪怕百分之一的可能。",
+  title: '宋临川律师 | 民商事与刑事法律服务',
+  description: '诚心诚意，尽心尽力。中华人民共和国执业律师。任何时候我都视委托如山，只为帮您争取最大的利益。',
 };
 
 export default function RootLayout({
