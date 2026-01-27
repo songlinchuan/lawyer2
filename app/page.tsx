@@ -85,7 +85,7 @@ export default function Portfolio() {
           <div className="space-y-2">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">宋临川</h1>
             <p className="text-sm md:text-base text-gray-500 font-medium tracking-wide uppercase">
-              中华人民共和国执业律师 <span className="mx-2">|</span> 民商事、刑事权益捍卫者
+              中华人民共和国执业律师 
             </p>
             <p className="text-xl text-gray-800 font-serif italic pt-2">&quot;诚心诚意，尽心尽力&quot;</p>
           </div>
@@ -103,7 +103,7 @@ export default function Portfolio() {
           <p className="text-lg leading-relaxed text-gray-700">
             生于齐鲁，少时旁观世事变迁，深感法律于个体命运之重，遂立志以法安身。
             <br/><br/>
-            执业至今，我不仅是法律的诠释者，更是您合法权益的坚实捍卫者。任何时候我都诚心诚意对待每一位当事人的委托，尽心尽力争取哪怕百分之一的可能，我笃信“细节决定成败”，只为帮您争取最大的利益。
+            执业至今，我不仅是法律的诠释者，更是您合法权益的坚实捍卫者。任何时候我都诚心诚意对待每一位当事人的委托，尽心尽力争取哪怕百分之一的可能。我笃信“细节决定成败”，只为帮您争取最大的利益。
           </p>
         </motion.section>
 
