@@ -133,6 +133,60 @@ export default function Portfolio() {
           </div>
         </motion.section>
 
+{/* --- 新增：服务流程 (大卡片风格) --- */}
+      <section className="px-6 max-w-2xl mx-auto mb-24">
+        <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-8 border-l-2 border-gray-300 pl-3">
+          服务流程 / Process
+        </h2>
+        
+        <div className="space-y-4">
+          {/* 步骤 1 */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-md transition-shadow">
+            <div className="absolute right-[-10px] top-[-10px] text-8xl font-bold text-gray-50 opacity-50 select-none group-hover:text-blue-50 transition-colors">
+              1
+            </div>
+            <h3 className="text-lg font-bold text-gray-800 mb-2 relative z-10 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+              法律分析与风险研判
+            </h3>
+            <p className="text-sm text-gray-500 leading-relaxed relative z-10">
+              <span className="block font-semibold text-gray-700 mb-1">法律服务的第一步，是理性的回归。</span>
+              我将协助您剥离案件中的情绪干扰，客观梳理核心法律事实与法律关系。基于证据与法理，为您提供真实的法律评估与风险预警。
+            </p>
+          </div>
+
+          {/* 步骤 2 */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-md transition-shadow">
+            <div className="absolute right-[-10px] top-[-10px] text-8xl font-bold text-gray-50 opacity-50 select-none group-hover:text-blue-50 transition-colors">
+              2
+            </div>
+            <h3 className="text-lg font-bold text-gray-800 mb-2 relative z-10 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+              策略定制与路径优选
+            </h3>
+            <p className="text-sm text-gray-500 leading-relaxed relative z-10">
+              <span className="block font-semibold text-gray-700 mb-1">诉讼并非唯一手段，而是手段之一。</span>
+              综合考量时间成本、经济投入与预期收益，为您定制“非诉谈判、和解调解、诉讼仲裁”等多种路径，寻找最具性价比的问题最优解。
+            </p>
+          </div>
+
+          {/* 步骤 3 */}
+          <div className="bg-gray-900 p-6 rounded-2xl shadow-lg border border-gray-800 relative overflow-hidden text-white">
+            <div className="absolute right-[-10px] top-[-10px] text-8xl font-bold text-gray-800 opacity-50 select-none">
+              3
+            </div>
+            <h3 className="text-lg font-bold text-white mb-2 relative z-10 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.5)]"></span>
+              精细化代理与交付
+            </h3>
+            <p className="text-sm text-gray-400 leading-relaxed relative z-10">
+              <span className="block font-semibold text-gray-200 mb-1">细节决定案件走向。</span>
+              从证据链的构建到庭审/谈判的逻辑攻防，我将以严谨的程序控制和专业的法律素养，在法律框架内，为您争取合法利益的最大化。
+            </p>
+          </div>
+        </div>
+      </section>
+        
         {/* --- 4. Honors Section --- */}
         <motion.section variants={fadeInUp} className="mt-24 mb-12 space-y-8">
           <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest">所谓荣耀 / Honors</h2>
