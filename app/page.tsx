@@ -153,7 +153,7 @@ export default function Portfolio() {
           </div>
         </motion.section>
 
-{/* --- 5. Footer (终极版：银灰配色 + 全局操作提示) --- */}
+{/* --- 5. Footer (最终定稿：雅致灰配色 + 交互反馈) --- */}
         <motion.footer variants={fadeInUp} className="mt-24 bg-gray-50 border-t border-gray-200 text-gray-600 py-8 px-6 -mx-6 text-sm rounded-t-3xl">
           <div className="max-w-2xl mx-auto space-y-6">
             
@@ -173,8 +173,8 @@ export default function Portfolio() {
                     山东怀法律师事务所
                   </h4>
                 </div>
-                {/* 提示语：换行显示更清晰，或者跟在后面 */}
-                <p className="text-xs text-blue-500 mt-1 pl-7 opacity-80 group-hover:opacity-100">
+                {/* 提示语：改回灰色，hover时变深 */}
+                <p className="text-xs text-gray-400 mt-1 pl-7 group-hover:text-gray-600 transition-colors">
                   (点击访问律所官网)
                 </p>
               </a>
@@ -190,7 +190,7 @@ export default function Portfolio() {
                     山东省济南市历下区城投环贸中心C座6号楼1801室
                   </p>
                 </div>
-                <p className="text-xs text-blue-500 mt-1 pl-7 opacity-80 group-hover:opacity-100">
+                <p className="text-xs text-gray-400 mt-1 pl-7 group-hover:text-gray-600 transition-colors">
                   (点击选择地图导航)
                 </p>
               </div>
@@ -204,7 +204,7 @@ export default function Portfolio() {
                   <Phone size={16} className="flex-shrink-0 text-gray-400 group-hover:text-green-500 transition-colors" />
                   <p className="group-hover:text-gray-900 font-medium">服务电话：{PHONE_NUMBER}</p>
                 </div>
-                <p className="text-xs text-green-600 mt-1 pl-7 opacity-80 group-hover:opacity-100">
+                <p className="text-xs text-gray-400 mt-1 pl-7 group-hover:text-gray-600 transition-colors">
                   (点击直接拨打)
                 </p>
               </a>
