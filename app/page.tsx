@@ -153,63 +153,61 @@ export default function Portfolio() {
           </div>
         </motion.section>
 
-{/* --- 5. Footer (方案一：轻奢雅灰 + 紧凑版) --- */}
-        <motion.footer variants={fadeInUp} className="mt-24 bg-[#1A202C] text-gray-400 py-8 px-6 -mx-6 text-sm rounded-t-3xl shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+{/* --- 5. Footer (银灰商务版：保留原布局，改浅色，高度收紧) --- */}
+        <motion.footer variants={fadeInUp} className="mt-24 bg-gray-50 border-t border-gray-200 text-gray-600 py-8 px-6 -mx-6 text-sm rounded-t-3xl">
           <div className="max-w-2xl mx-auto space-y-6">
             
             {/* 律所信息 */}
-            <div className="space-y-3">
+            <div className="space-y-4">
               
-              {/* 律所名称 */}
+              {/* 律所名称 -> 跳转官网 */}
               <a 
                 href="http://www.shandonghuaifa.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="group flex items-center gap-2 w-fit mb-2"
+                className="group flex items-center gap-2 w-fit"
               >
-                <h4 className="text-gray-100 font-bold text-base flex items-center gap-2 group-hover:text-blue-300 transition-colors">
-                  <Building2 size={16} />
+                <h4 className="text-gray-900 font-bold text-lg flex items-center gap-2 group-hover:text-blue-600 transition-colors">
+                  <Building2 size={18} />
                   山东怀法律师事务所
-                  <span className="opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all text-xs font-normal text-gray-400">
+                  <span className="opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all text-xs font-normal text-gray-500">
                     (访问官网)
                   </span>
                 </h4>
               </a>
               
-              {/* 地址 */}
+              {/* 地址 -> 点击弹出导航 */}
               <div 
                 onClick={() => setIsNavModalOpen(true)}
-                className="flex items-start gap-3 hover:text-gray-200 transition-colors group cursor-pointer"
+                className="flex items-start gap-3 hover:text-blue-600 transition-colors group cursor-pointer"
               >
-                <MapPin size={15} className="mt-0.5 flex-shrink-0 text-gray-500 group-hover:text-blue-300 transition-colors" />
-                <div>
-                  <p className="leading-snug">
-                    山东省济南市历下区城投环贸中心C座6号楼1801室
-                  </p>
-                  <p className="text-xs text-gray-600 group-hover:text-blue-300 mt-0.5">
+                <MapPin size={16} className="mt-1 flex-shrink-0 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                <p className="leading-relaxed text-gray-600 group-hover:text-gray-900">
+                  山东省济南市历下区城投环贸中心C座6号楼1801室
+                  <span className="block text-xs text-gray-400 group-hover:text-blue-500 mt-1">
                     (点击选择地图导航)
-                  </p>
-                </div>
+                  </span>
+                </p>
               </div>
               
-              {/* 电话 */}
+              {/* 电话 -> 一键拨号 */}
               <a 
                 href={`tel:${PHONE_NUMBER}`}
-                className="flex items-center gap-3 hover:text-gray-200 transition-colors group w-fit"
+                className="flex items-center gap-3 hover:text-green-600 transition-colors group w-fit"
               >
-                <Phone size={15} className="flex-shrink-0 text-gray-500 group-hover:text-green-300 transition-colors" />
-                <p>服务电话：{PHONE_NUMBER}</p>
+                <Phone size={16} className="flex-shrink-0 text-gray-400 group-hover:text-green-500 transition-colors" />
+                <p className="group-hover:text-gray-900 font-medium">服务电话：{PHONE_NUMBER}</p>
               </a>
             </div>
 
-            {/* 版权信息 */}
-            <div className="border-t border-gray-700/50 pt-6 text-xs text-gray-500 text-center leading-relaxed">
-              <p>© 2026 宋临川律师团队. All rights reserved.</p>
+            {/* 版权信息 (灰色分割线) */}
+            <div className="border-t border-gray-200 pt-6 text-xs text-gray-400 text-center">
+              <p className="mb-2">© 2026 宋临川律师团队. All rights reserved.</p>
               <p>本网站内容仅供参考，不构成正式法律意见。</p>
             </div>
           </div>
         </motion.footer>
-
+        
       </motion.div>
 
       {/* --- Modals / 弹窗组件 --- */}
