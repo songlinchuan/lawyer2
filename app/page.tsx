@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Phone, MessageCircle, X, ChevronRight, Copy, MapPin, Building2 } from "lucide-react";
-import Image from "next/image";
 
 // --- 配置区域 ---
 const AVATAR_IMAGE = "/avatar.jpg";
@@ -55,172 +54,186 @@ export default function Portfolio() {
   const [showWeChat, setShowWeChat] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
   const [selectedCase, setSelectedCase] = useState<{title: string, desc: string} | null>(null);
-  
-  // 1. 新增：导航菜单开关
   const [isNavModalOpen, setIsNavModalOpen] = useState(false);
   
-  // 复制电话号码功能
   const copyToClipboard = () => {
     if (typeof navigator !== "undefined") {
         navigator.clipboard.writeText(PHONE_NUMBER);
-        // alert("电话号码已复制"); // 注释掉以免报错
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#FBFBFD] text-gray-900 font-sans selection:bg-gray-200">
-      <motion.div 
-        initial="hidden"
-        animate="visible"
-        variants={staggerContainer}
-        className="max-w-2xl mx-auto px-6 py-20 md:py-32"
-      >
-        
-        {/* --- 1. Hero Section --- */}
-        <motion.div variants={fadeInUp} className="flex flex-col items-center text-center space-y-6">
-          <div className="relative group">
+    // 最外层容器：电脑端开启 flex 布局，手机端默认 block
+    <div className="min-h-screen bg-[#FBFBFD] text-gray-900 font-sans selection:bg-gray-200 lg:flex">
+      
+      {/* ———————— 左侧区域 (电脑端固定 / 手机端置顶) ———————— */}
+      <aside className="
+        w-full lg:w-[35%] lg:h-screen lg:sticky lg:top-0 
+        bg-[#FBFBFD] lg:bg-white lg:border-r border-gray-100 
+        flex flex-col justify-center items-center 
+        px-6 py-20 lg:p-0 z-10
+      ">
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="flex flex-col items-center text-center space-y-6"
+        >
+          {/* 头像 */}
+          <motion.div variants={fadeInUp} className="relative group">
             <div className="absolute inset-0 bg-gray-200 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
             <img 
               src={AVATAR_IMAGE} 
               alt="Song Linchuan" 
               className="relative w-32 h-32 md:w-40 md:h-40 object-cover rounded-2xl shadow-sm transition-all duration-700"
             />
-          </div>
+          </motion.div>
           
-          <div className="space-y-2">
+          {/* 姓名与头衔 */}
+          <motion.div variants={fadeInUp} className="space-y-2">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">宋临川</h1>
             <p className="text-sm md:text-base text-gray-500 font-medium tracking-wide uppercase">
               中华人民共和国执业律师 
             </p>
             <p className="text-xl text-gray-800 font-serif italic pt-2">&quot;诚心诚意，尽心尽力&quot;</p>
-          </div>
+          </motion.div>
 
-          <div className="flex space-x-6 pt-4">
+          {/* 社交按钮 */}
+          <motion.div variants={fadeInUp} className="flex space-x-6 pt-4">
             <SocialButton icon={<MessageCircle size={20} />} label="微信" onClick={() => setShowWeChat(true)} />
             <SocialButton icon={<Phone size={20} />} label="电话" onClick={() => setShowPhone(true)} />
-          </div>
+          </motion.div>
         </motion.div>
+      </aside>
 
-        {/* --- 2. Bio Section --- */}
-        <motion.section variants={fadeInUp} className="mt-24 space-y-6">
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest">关于我 / About</h2>
-          <p className="text-lg leading-relaxed text-gray-700">
-            生于齐鲁，少时旁观世事变迁，深感法律于个体命运之重，遂立志以法安身。
-            <br/><br/>
-            执业至今，我不仅是法律的诠释者，更是您合法权益的坚实捍卫者。任何时候我都诚心诚意对待每一位当事人的委托，尽心尽力争取哪怕百分之一的可能。我笃信“细节决定成败”，只为帮您争取最大的利益。
-          </p>
-        </motion.section>
+      {/* ———————— 右侧区域 (电脑端滚动 / 手机端接在下面) ———————— */}
+      <main className="w-full lg:w-[65%] bg-[#FBFBFD]">
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="max-w-2xl mx-auto px-6 pb-20 pt-0 lg:pt-32 lg:pb-32 lg:px-12"
+        >
+          
+          {/* 1. 关于我 / Bio Section */}
+          <motion.section variants={fadeInUp} className="space-y-6">
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest">关于我 / About</h2>
+            <p className="text-lg leading-relaxed text-gray-700">
+              生于齐鲁，少时旁观世事变迁，深感法律于个体命运之重，遂立志以法安身。
+              <br/><br/>
+              执业至今，我不仅是法律的诠释者，更是您合法权益的坚实捍卫者。任何时候我都诚心诚意对待每一位当事人的委托，尽心尽力争取哪怕百分之一的可能。我笃信“细节决定成败”，只为帮您争取最大的利益。
+            </p>
+          </motion.section>
 
-        {/* --- 3. Case Studies (Tabs + Grid) --- */}
-        <motion.section variants={fadeInUp} className="mt-24 space-y-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest">我的案例 / Practice Areas</h2>
-          </div>
+          {/* 2. 我的案例 / Case Studies */}
+          <motion.section variants={fadeInUp} className="mt-24 space-y-8">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest">我的案例 / Practice Areas</h2>
+            </div>
 
-          <div className="flex space-x-2 bg-gray-100 p-1 rounded-lg w-fit">
-            <TabButton active={activeTab === "civil"} onClick={() => setActiveTab("civil")}>民事案件</TabButton>
-            <TabButton active={activeTab === "criminal"} onClick={() => setActiveTab("criminal")}>刑事案件</TabButton>
-            <TabButton active={activeTab === "admin"} onClick={() => setActiveTab("admin")}>行政案件</TabButton>
-          </div>
+            <div className="flex space-x-2 bg-gray-100 p-1 rounded-lg w-fit">
+              <TabButton active={activeTab === "civil"} onClick={() => setActiveTab("civil")}>民事案件</TabButton>
+              <TabButton active={activeTab === "criminal"} onClick={() => setActiveTab("criminal")}>刑事案件</TabButton>
+              <TabButton active={activeTab === "admin"} onClick={() => setActiveTab("admin")}>行政案件</TabButton>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <AnimatePresence mode="wait">
-              {casesData[activeTab].map((item) => (
-                <CaseCard 
-                  key={item.title} 
-                  title={item.title} 
-                  desc={item.desc} 
-                  onClick={() => setSelectedCase(item)}
-                />
-              ))}
-            </AnimatePresence>
-          </div>
-        </motion.section>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <AnimatePresence mode="wait">
+                {casesData[activeTab].map((item) => (
+                  <CaseCard 
+                    key={item.title} 
+                    title={item.title} 
+                    desc={item.desc} 
+                    onClick={() => setSelectedCase(item)}
+                  />
+                ))}
+              </AnimatePresence>
+            </div>
+          </motion.section>
         
-        {/* --- 4. Honors Section --- */}
-        <motion.section variants={fadeInUp} className="mt-24 mb-12 space-y-8">
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest">所谓荣耀 / Honors</h2>
-          <div className="space-y-6 border-l-2 border-gray-200 pl-6">
-            <HonorItem>
-              团队每年圆满解决数十起案件
-            </HonorItem>
-            <HonorItem>
-              获得数位当事人的满意评价与锦旗感谢
-            </HonorItem>
-            <HonorItem>
-              本人与团队十年如一日地保持对当事人的责任担当、对律师行业的使命坚守、对法律领域的深耕探索
-            </HonorItem>
-          </div>
-        </motion.section>
+          {/* 3. 所谓荣耀 / Honors */}
+          <motion.section variants={fadeInUp} className="mt-24 mb-12 space-y-8">
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest">所谓荣耀 / Honors</h2>
+            <div className="space-y-6 border-l-2 border-gray-200 pl-6">
+              <HonorItem>
+                团队每年圆满解决数十起案件
+              </HonorItem>
+              <HonorItem>
+                获得数位当事人的满意评价与锦旗感谢
+              </HonorItem>
+              <HonorItem>
+                本人与团队十年如一日地保持对当事人的责任担当、对律师行业的使命坚守、对法律领域的深耕探索
+              </HonorItem>
+            </div>
+          </motion.section>
 
-{/* --- 5. Footer (最终定稿：雅致灰配色 + 交互反馈) --- */}
-        <motion.footer variants={fadeInUp} className="mt-24 bg-gray-50 border-t border-gray-200 text-gray-600 py-8 px-6 -mx-6 text-sm rounded-t-3xl">
-          <div className="max-w-2xl mx-auto space-y-6">
-            
-            {/* 律所信息 */}
-            <div className="space-y-5">
+          {/* 4. 页脚 / Footer */}
+          <motion.footer variants={fadeInUp} className="mt-24 bg-gray-50 border-t border-gray-200 text-gray-600 py-8 px-6 -mx-6 lg:mx-0 lg:rounded-xl text-sm rounded-t-3xl">
+            <div className="max-w-2xl mx-auto space-y-6">
               
-              {/* 1. 律所名称 -> 跳转官网 */}
-              <a 
-                href="http://www.shandonghuaifa.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="group block w-fit"
-              >
-                <div className="flex items-center gap-2">
-                  <Building2 size={18} className="text-gray-900" />
-                  <h4 className="text-gray-900 font-bold text-lg group-hover:text-blue-600 transition-colors">
-                    山东怀法律师事务所
-                  </h4>
-                </div>
-                {/* 提示语：改回灰色，hover时变深 */}
-                <p className="text-xs text-gray-400 mt-1 pl-7 group-hover:text-gray-600 transition-colors">
-                  (点击访问律所官网)
-                </p>
-              </a>
-              
-              {/* 2. 地址 -> 点击弹出导航 */}
-              <div 
-                onClick={() => setIsNavModalOpen(true)}
-                className="group cursor-pointer block w-fit"
-              >
-                <div className="flex items-start gap-3">
-                  <MapPin size={16} className="mt-1 flex-shrink-0 text-gray-400 group-hover:text-blue-500 transition-colors" />
-                  <p className="leading-relaxed text-gray-600 group-hover:text-gray-900">
-                    山东省济南市历下区城投环贸中心C座6号楼1801室
+              {/* 律所信息 */}
+              <div className="space-y-5">
+                {/* 1. 律所名称 */}
+                <a 
+                  href="http://www.shandonghuaifa.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="group block w-fit"
+                >
+                  <div className="flex items-center gap-2">
+                    <Building2 size={18} className="text-gray-900" />
+                    <h4 className="text-gray-900 font-bold text-lg group-hover:text-blue-600 transition-colors">
+                      山东怀法律师事务所
+                    </h4>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1 pl-7 group-hover:text-gray-600 transition-colors">
+                    (点击访问律所官网)
+                  </p>
+                </a>
+                
+                {/* 2. 地址 */}
+                <div 
+                  onClick={() => setIsNavModalOpen(true)}
+                  className="group cursor-pointer block w-fit"
+                >
+                  <div className="flex items-start gap-3">
+                    <MapPin size={16} className="mt-1 flex-shrink-0 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                    <p className="leading-relaxed text-gray-600 group-hover:text-gray-900">
+                      山东省济南市历下区城投环贸中心C座6号楼1801室
+                    </p>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1 pl-7 group-hover:text-gray-600 transition-colors">
+                    (点击选择地图导航)
                   </p>
                 </div>
-                <p className="text-xs text-gray-400 mt-1 pl-7 group-hover:text-gray-600 transition-colors">
-                  (点击选择地图导航)
-                </p>
+                
+                {/* 3. 电话 */}
+                <a 
+                  href={`tel:${PHONE_NUMBER}`}
+                  className="group block w-fit"
+                >
+                  <div className="flex items-center gap-3">
+                    <Phone size={16} className="flex-shrink-0 text-gray-400 group-hover:text-green-500 transition-colors" />
+                    <p className="group-hover:text-gray-900 font-medium">服务电话：{PHONE_NUMBER}</p>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1 pl-7 group-hover:text-gray-600 transition-colors">
+                    (点击拨打或复制 · 手机号同微信)
+                  </p>
+                </a>
               </div>
-              
-              {/* 3. 电话 -> 一键拨号 */}
-              <a 
-                href={`tel:${PHONE_NUMBER}`}
-                className="group block w-fit"
-              >
-                <div className="flex items-center gap-3">
-                  <Phone size={16} className="flex-shrink-0 text-gray-400 group-hover:text-green-500 transition-colors" />
-                  <p className="group-hover:text-gray-900 font-medium">服务电话：{PHONE_NUMBER}</p>
-                </div>
-                <p className="text-xs text-gray-400 mt-1 pl-7 group-hover:text-gray-600 transition-colors">
-                  (点击拨打或复制 · 手机号同微信)
-                </p>
-              </a>
-            </div>
 
-            {/* 版权信息 */}
-            <div className="border-t border-gray-200 pt-6 text-xs text-gray-400 text-center">
-              <p className="mb-2">© 2026 宋临川律师团队. All rights reserved.</p>
-              <p>本网站内容仅供参考，不构成正式法律意见。</p>
+              {/* 版权信息 */}
+              <div className="border-t border-gray-200 pt-6 text-xs text-gray-400 text-center">
+                <p className="mb-2">© 2026 宋临川律师团队. All rights reserved.</p>
+                <p>本网站内容仅供参考，不构成正式法律意见。</p>
+              </div>
             </div>
-          </div>
-        </motion.footer>
-        
-      </motion.div>
+          </motion.footer>
 
-      {/* --- Modals / 弹窗组件 --- */}
+        </motion.div>
+      </main>
+
+      {/* --- Modals / 弹窗组件 (保持逻辑不变) --- */}
       
       {/* 微信弹窗 */}
       <Modal isOpen={showWeChat} onClose={() => setShowWeChat(false)} title="扫码添加微信">
@@ -258,7 +271,7 @@ export default function Portfolio() {
         </div>
       </Modal>
 
-      {/* 3. 新增：导航菜单弹窗 (放在最后) */}
+      {/* 导航菜单弹窗 */}
       <AnimatePresence>
         {isNavModalOpen && (
           <motion.div 
@@ -300,7 +313,7 @@ export default function Portfolio() {
   );
 }
 
-// --- 子组件定义 ---
+// --- 子组件 (保持不变) ---
 
 function SocialButton({ icon, label, onClick }: { icon: React.ReactNode, label: string, onClick: () => void }) {
   return (
