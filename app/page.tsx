@@ -205,7 +205,7 @@ export default function Portfolio() {
                   <p className="group-hover:text-gray-900 font-medium">服务电话：{PHONE_NUMBER}</p>
                 </div>
                 <p className="text-xs text-gray-400 mt-1 pl-7 group-hover:text-gray-600 transition-colors">
-                  (点击拨打或复制)
+                  (点击拨打或复制 · 手机号同微信)
                 </p>
               </a>
             </div>
