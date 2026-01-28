@@ -5,6 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Phone, MessageCircle, X, ChevronRight, Copy, MapPin, Building2 } from "lucide-react";
 import Image from "next/image";
 
+// --- 类型定义 (这是解决红叉的关键，用正规定义代替 any) ---
+type CaseItem = {
+  title: string;
+  desc: string;
+};
+
+type CasesDataType = Record<string, CaseItem[]>;
+
 // --- 配置区域 ---
 const AVATAR_IMAGE = "/avatar.jpg";
 const WECHAT_QR_IMAGE = "/wechat-qr.jpg"; 
@@ -31,8 +39,8 @@ const staggerContainer = {
   }
 };
 
-// --- 数据配置 (去掉了复杂的 TS 类型定义，防止报错) ---
-const casesData: any = {
+// --- 数据配置 ---
+const casesData: CasesDataType = {
   "民事案件": [
     { title: "人格权纠纷", desc: "名誉权、隐私权及肖像权侵权诉讼与维权。" },
     { title: "婚姻家庭/继承纠纷", desc: "离婚财产分割、子女抚养及遗产继承规划。" },
@@ -62,16 +70,18 @@ const honorsData = [
 
 export default function Portfolio() {
   const [activeTab, setActiveTab] = useState("民事案件");
-  const [selectedCase, setSelectedCase] = useState<any>(null);
+  const [selectedCase, setSelectedCase] = useState<CaseItem | null>(null);
   
   // 弹窗状态管理
   const [isWeChatModalOpen, setIsWeChatModalOpen] = useState(false);
   const [isNavModalOpen, setIsNavModalOpen] = useState(false); 
 
-  // 复制微信号/电话功能 (去掉了 alert，改用 console.log 防止报错)
+  // 复制功能
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(PHONE_NUMBER); 
-    console.log("号码已复制");
+    if (typeof navigator !== "undefined") {
+      navigator.clipboard.writeText(PHONE_NUMBER);
+      // alert("号码已复制！"); // 为了防止弹窗报错，暂时注释掉，只保留复制功能
+    }
   };
 
   return (
@@ -181,7 +191,7 @@ export default function Portfolio() {
         {/* 案例列表 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <AnimatePresence mode="wait">
-            {casesData[activeTab].map((item: any, index: number) => (
+            {(casesData[activeTab] || []).map((item, index) => (
               <motion.div
                 key={item.title}
                 layout
@@ -214,178 +224,3 @@ export default function Portfolio() {
         </h2>
         <div className="space-y-6 border-l-2 border-gray-200 pl-6 relative">
           {honorsData.map((item, index) => (
-            <div key={index} className="relative">
-              <div className="absolute -left-[31px] top-1.5 w-3 h-3 bg-gray-200 rounded-full border-2 border-white shadow-sm"></div>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                {item}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 5. Footer 页脚 (黑金风格 | 终极版) */}
-      <footer className="bg-gray-900 text-gray-400 py-12 px-6 mt-24 text-sm">
-        <div className="max-w-2xl mx-auto space-y-8">
-          
-          {/* 律所信息 */}
-          <div className="space-y-5">
-            
-            {/* 律所名称 -> 跳转官网 */}
-            <a 
-              href="http://www.shandonghuaifa.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="group flex items-center gap-2 w-fit"
-            >
-              <h4 className="text-white font-bold text-lg flex items-center gap-2 group-hover:text-blue-400 transition-colors">
-                <Building2 size={18} />
-                {FIRM_NAME}
-                <span className="opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all text-xs font-normal">
-                  (访问官网)
-                </span>
-              </h4>
-            </a>
-            
-            {/* 地址 -> 点击弹出导航选择菜单 */}
-            <div 
-              onClick={() => setIsNavModalOpen(true)}
-              className="flex items-start gap-3 hover:text-white transition-colors group cursor-pointer"
-            >
-              <MapPin size={16} className="mt-1 flex-shrink-0 text-gray-500 group-hover:text-blue-400 transition-colors" />
-              <p className="leading-relaxed text-gray-400 group-hover:text-gray-200">
-                山东省济南市历下区城投环贸中心C座6号楼1801室
-                <span className="block text-xs text-gray-600 group-hover:text-blue-400 mt-1">
-                  (点击选择地图导航)
-                </span>
-              </p>
-            </div>
-            
-            {/* 电话 -> 一键拨号 */}
-            <a 
-              href={`tel:${PHONE_NUMBER}`}
-              className="flex items-center gap-3 hover:text-white transition-colors group w-fit"
-            >
-              <Phone size={16} className="flex-shrink-0 text-gray-500 group-hover:text-green-400 transition-colors" />
-              <p className="group-hover:text-gray-200">服务电话：{PHONE_NUMBER}</p>
-            </a>
-          </div>
-
-          {/* 版权与免责 */}
-          <div className="border-t border-gray-800 pt-8 text-xs text-gray-600 text-center">
-            <p className="mb-2">© 2026 宋临川律师团队. All rights reserved.</p>
-            <p>本网站内容仅供参考，不构成正式法律意见。</p>
-          </div>
-        </div>
-      </footer>
-
-      {/* --- 弹窗 1：微信二维码 --- */}
-      <AnimatePresence>
-        {isWeChatModalOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-6"
-            onClick={() => setIsWeChatModalOpen(false)}
-          >
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold text-gray-900">添加微信</h3>
-                <button onClick={() => setIsWeChatModalOpen(false)} className="p-1 hover:bg-gray-100 rounded-full">
-                  <X size={20} className="text-gray-500" />
-                </button>
-              </div>
-              <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden mb-4">
-                <Image src={WECHAT_QR_IMAGE} alt="微信二维码" fill className="object-cover" />
-              </div>
-              <p className="text-center text-sm text-gray-500 mb-4">
-                长按识别二维码，或点击下方复制微信号
-              </p>
-              <button 
-                onClick={copyToClipboard}
-                className="w-full py-3 bg-gray-50 text-gray-900 font-medium rounded-xl border border-gray-200 flex items-center justify-center gap-2 hover:bg-gray-100 active:scale-95 transition-all"
-              >
-                <Copy size={16} />
-                {PHONE_NUMBER}
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* --- 弹窗 2：导航选择菜单 (仿微信风格) --- */}
-      <AnimatePresence>
-        {isNavModalOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center sm:items-center p-4"
-            onClick={() => setIsNavModalOpen(false)}
-          >
-            <motion.div 
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="bg-white w-full max-w-sm rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="p-4 border-b border-gray-100 text-center">
-                <h3 className="text-sm font-bold text-gray-500">选择地图导航</h3>
-                <p className="text-xs text-gray-400 mt-1">将跳转至外部地图应用</p>
-              </div>
-              
-              <div className="flex flex-col">
-                <a 
-                  href="https://uri.amap.com/marker?position=117.11906,36.65756&name=山东怀法律师事务所&coordinate=Gaode"
-                  target="_blank"
-                  className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors"
-                >
-                  高德地图
-                </a>
-                <a 
-                  href="http://api.map.baidu.com/marker?location=36.6636,117.1255&title=山东怀法律师事务所&content=山东省济南市历下区城投环贸中心C座6号楼1801室&output=html"
-                  target="_blank"
-                  className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors"
-                >
-                  百度地图
-                </a>
-                <a 
-                  href="https://apis.map.qq.com/uri/v1/search?keyword=山东怀法律师事务所&region=济南"
-                  target="_blank"
-                  className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors"
-                >
-                  腾讯地图
-                </a>
-                <a 
-                  href="http://maps.apple.com/?q=山东怀法律师事务所&address=山东省济南市历下区城投环贸中心C座"
-                  target="_blank"
-                  className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 transition-colors"
-                >
-                  苹果地图
-                </a>
-              </div>
-
-              <div className="bg-gray-100 p-2">
-                <button 
-                  onClick={() => setIsNavModalOpen(false)}
-                  className="w-full py-3 bg-white rounded-xl text-gray-600 font-bold shadow-sm hover:bg-gray-50 transition-colors"
-                >
-                  取消
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </main>
-  );
-}
