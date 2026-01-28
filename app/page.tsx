@@ -63,11 +63,10 @@ export default function Portfolio() {
   };
 
   return (
-    // 最外层容器
+    // 最外层容器：电脑端左右布局，手机端上下布局
     <div className="min-h-screen bg-[#FBFBFD] text-gray-900 font-sans selection:bg-gray-200 lg:flex">
       
-      {/* ———————— 左侧区域 (电脑端固定) ———————— */}
-      {/* 修改重点：lg:w-[35%] -> lg:w-[30%] 让左侧栏稍微窄一点，更精致 */}
+      {/* ———————— 左侧区域 (电脑端固定 / 手机端置顶) ———————— */}
       <aside className="
         w-full lg:w-[30%] lg:h-screen lg:sticky lg:top-0 
         bg-[#FBFBFD] lg:bg-white lg:border-r border-gray-100 
@@ -78,37 +77,30 @@ export default function Portfolio() {
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
-          className="flex flex-col items-center text-center space-y-6 lg:space-y-8" // 电脑端拉大一点间距
+          className="flex flex-col items-center text-center space-y-6 lg:space-y-8"
         >
-          {/* 1. 头像区 */}
+          {/* 头像 */}
           <motion.div variants={fadeInUp} className="relative group">
             <div className="absolute inset-0 bg-gray-200 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
             <img 
               src={AVATAR_IMAGE} 
               alt="Song Linchuan" 
-              // 修改重点：md:w-40 md:h-40 -> lg:w-28 lg:h-28 (电脑上头像变小，更精致)
-              // 手机保持 w-32 (w-32)
               className="relative w-32 h-32 lg:w-28 lg:h-28 object-cover rounded-2xl shadow-sm transition-all duration-700"
             />
           </motion.div>
           
-          {/* 2. 姓名与头衔 */}
+          {/* 姓名与头衔 */}
           <motion.div variants={fadeInUp} className="space-y-3 lg:space-y-4">
-            {/* 名字：手机大(3xl)，电脑稍微克制一点(2xl) */}
             <h1 className="text-3xl lg:text-3xl font-bold tracking-tight text-gray-900">宋临川</h1>
-            
-            {/* 执业证号：字体变小，加宽字间距，显得更高级 */}
             <p className="text-sm lg:text-xs text-gray-400 font-medium tracking-[0.2em] uppercase">
               中华人民共和国执业律师 
             </p>
-            
-            {/* Slogan：稍微调小字号，用灰色 */}
             <p className="text-lg lg:text-base text-gray-600 font-serif italic pt-2">
               &quot;诚心诚意，尽心尽力&quot;
             </p>
           </motion.div>
 
-          {/* 3. 社交按钮 (调整 padding 让按钮看起来更小巧) */}
+          {/* 社交按钮 */}
           <motion.div variants={fadeInUp} className="flex space-x-5 pt-2">
             <SocialButton icon={<MessageCircle size={18} />} label="微信" onClick={() => setShowWeChat(true)} />
             <SocialButton icon={<Phone size={18} />} label="电话" onClick={() => setShowPhone(true)} />
@@ -117,7 +109,6 @@ export default function Portfolio() {
       </aside>
 
       {/* ———————— 右侧区域 (内容滚动) ———————— */}
-      {/* 对应调整宽度：lg:w-[65%] -> lg:w-[70%] */}
       <main className="w-full lg:w-[70%] bg-[#FBFBFD]">
         <motion.div 
           initial="hidden"
@@ -181,52 +172,70 @@ export default function Portfolio() {
             </div>
           </motion.section>
 
-          {/* 4. 页脚 / Footer */}
-          <motion.footer variants={fadeInUp} className="mt-32 pt-12 border-t border-gray-100 text-gray-500 text-sm">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          {/* 4. 页脚 / Footer (还原为纯垂直排列) */}
+          <motion.footer variants={fadeInUp} className="mt-32 bg-gray-50 border-t border-gray-200 text-gray-600 py-10 px-8 -mx-6 lg:mx-0 lg:rounded-xl text-sm rounded-t-3xl">
+            
+            {/* 核心容器：限制最大宽度，确保内容对齐 */}
+            <div className="max-w-2xl mx-auto space-y-8"> 
               
-              {/* 律所信息 */}
-              <div className="space-y-4">
+              {/* 第一部分：联系信息 (垂直堆叠，左对齐) */}
+              <div className="space-y-5">
+                
+                {/* 1. 律所名称 */}
                 <a 
                   href="http://www.shandonghuaifa.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="group block"
+                  className="group block w-fit"
                 >
-                  <h4 className="text-gray-900 font-bold text-base group-hover:text-blue-600 transition-colors flex items-center gap-2">
-                    <Building2 size={16}/> 山东怀法律师事务所
-                  </h4>
-                  <p className="text-xs text-gray-400 mt-1 pl-6">点击访问官网</p>
+                  <div className="flex items-center gap-3">
+                    <Building2 size={18} className="text-gray-900" />
+                    <h4 className="text-gray-900 font-bold text-base group-hover:text-blue-600 transition-colors">
+                      山东怀法律师事务所
+                    </h4>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1 pl-8 group-hover:text-gray-600 transition-colors">
+                    (点击访问律所官网)
+                  </p>
                 </a>
                 
+                {/* 2. 地址 */}
                 <div 
                   onClick={() => setIsNavModalOpen(true)}
-                  className="group cursor-pointer block"
+                  className="group cursor-pointer block w-fit"
                 >
-                   <p className="leading-relaxed group-hover:text-gray-900 flex items-start gap-2">
-                    <MapPin size={16} className="mt-0.5 shrink-0"/> 山东省济南市历下区城投环贸中心C座6号楼1801室
-                   </p>
-                   <p className="text-xs text-gray-400 mt-1 pl-6">点击导航</p>
+                  <div className="flex items-start gap-3">
+                    <MapPin size={18} className="mt-0.5 flex-shrink-0 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                    <p className="leading-relaxed text-gray-600 group-hover:text-gray-900">
+                      山东省济南市历下区城投环贸中心C座6号楼1801室
+                    </p>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1 pl-8 group-hover:text-gray-600 transition-colors">
+                    (点击选择地图导航)
+                  </p>
                 </div>
-              </div>
-
-              {/* 联系与版权 */}
-              <div className="space-y-4 md:text-right">
+                
+                {/* 3. 电话 */}
                 <a 
                   href={`tel:${PHONE_NUMBER}`}
-                  className="group block"
+                  className="group block w-fit"
                 >
-                   <p className="group-hover:text-gray-900 font-medium text-lg tracking-wider">
-                     {PHONE_NUMBER}
-                   </p>
-                   <p className="text-xs text-gray-400 mt-1">
-                     (手机同微信号)
-                   </p>
+                  <div className="flex items-center gap-3">
+                    <Phone size={18} className="flex-shrink-0 text-gray-400 group-hover:text-green-500 transition-colors" />
+                    <p className="group-hover:text-gray-900 font-medium tracking-wider text-lg">
+                      {PHONE_NUMBER}
+                    </p>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1 pl-8 group-hover:text-gray-600 transition-colors">
+                    (点击拨打或复制 · 手机号同微信)
+                  </p>
                 </a>
-                <div className="text-xs text-gray-300 pt-4">
-                  <p>© 2026 宋临川律师团队.</p>
-                  <p>All rights reserved.</p>
-                </div>
+              </div>
+
+              {/* 第二部分：版权信息 (居中) */}
+              <div className="border-t border-gray-200 pt-8 text-xs text-gray-400 text-center">
+                <p className="mb-2">© 2026 宋临川律师团队. All rights reserved.</p>
+                <p>本网站内容仅供参考，不构成正式法律意见。</p>
               </div>
 
             </div>
@@ -235,7 +244,7 @@ export default function Portfolio() {
         </motion.div>
       </main>
 
-      {/* --- Modals / 弹窗组件 (逻辑保持不变) --- */}
+      {/* --- Modals / 弹窗组件 (保持不变) --- */}
       
       {/* 微信弹窗 */}
       <Modal isOpen={showWeChat} onClose={() => setShowWeChat(false)} title="扫码添加微信">
