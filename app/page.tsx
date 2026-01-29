@@ -114,7 +114,7 @@ export default function Portfolio() {
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
-          className="max-w-3xl mx-auto px-6 pb-20 pt-0 lg:pt-32 lg:pb-32 lg:px-16"
+          className="max-w-3xl mx-auto px-6 pb-20 pt-0 lg:pt-32 lg:pb-10 lg:px-16"
         >
           
           {/* 1. 关于我 / Bio */}
