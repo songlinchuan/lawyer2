@@ -176,11 +176,15 @@ export default function Portfolio() {
 
           {/* 4. 页脚 / Footer */}
           {/* 调整：px-6 (减小内边距防止挤压)，保持垂直左对齐 */}
+         {/* 4. 页脚 / Footer */}
+          {/* 调整：px-6 (减小内边距防止挤压)，保持垂直左对齐 */}
           <motion.footer variants={fadeInUp} className="mt-32 bg-gray-50 border-t border-gray-200 text-gray-600 py-10 px-6 -mx-6 lg:mx-0 lg:rounded-xl text-sm rounded-t-3xl">
             <div className="max-w-2xl mx-auto space-y-8"> 
               
               {/* 第一部分：联系信息 (垂直堆叠，左对齐) */}
               <div className="space-y-5">
+                
+                {/* 1. 律所名称 (保持第一) */}
                 <a 
                   href="http://www.shandonghuaifa.com" 
                   target="_blank" 
@@ -197,25 +201,8 @@ export default function Portfolio() {
                     (点击访问律所官网)
                   </p>
                 </a>
-                
-                <div 
-                  onClick={() => setIsNavModalOpen(true)}
-                  className="group cursor-pointer block w-fit"
-                >
-                  <div className="flex items-start gap-3">
-                    <MapPin size={18} className="mt-0.5 flex-shrink-0 text-gray-400 group-hover:text-blue-500 transition-colors" />
-                    {/* 核心修复：将 "1801室" 用 span 包裹并设置 whitespace-nowrap
-                       作用：强制 "1801室" 不换行，要么一起在上一行，要么一起在下一行
-                    */}
-                    <p className="leading-relaxed text-gray-600 group-hover:text-gray-900">
-                      山东省济南市历下区城投环贸中心C座6号楼<span className="whitespace-nowrap">1801室</span>
-                    </p>
-                  </div>
-                  <p className="text-xs text-gray-400 mt-1 pl-8 group-hover:text-gray-600 transition-colors">
-                    (点击选择地图导航)
-                  </p>
-                </div>
-                
+
+                {/* 2. 电话 (原老三，提拔到第二) */}
                 <a 
                   href={`tel:${PHONE_NUMBER}`}
                   className="group block w-fit"
@@ -230,6 +217,23 @@ export default function Portfolio() {
                     (点击拨打或复制 · 手机号同微信)
                   </p>
                 </a>
+                
+                {/* 3. 地址 (原老二，下放到最后做压舱石) */}
+                <div 
+                  onClick={() => setIsNavModalOpen(true)}
+                  className="group cursor-pointer block w-fit"
+                >
+                  <div className="flex items-start gap-3">
+                    <MapPin size={18} className="mt-0.5 flex-shrink-0 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                    <p className="leading-relaxed text-gray-600 group-hover:text-gray-900">
+                      山东省济南市历下区城投环贸中心C座6号楼<span className="whitespace-nowrap">1801室</span>
+                    </p>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1 pl-8 group-hover:text-gray-600 transition-colors">
+                    (点击选择地图导航)
+                  </p>
+                </div>
+                
               </div>
 
               {/* 第二部分：版权信息 (居中) */}
