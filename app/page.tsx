@@ -4,6 +4,16 @@ import React, { useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Phone, MessageCircle, X, ChevronRight, Copy, MapPin, Building2 } from "lucide-react";
 
+// --- 类型定义 (修复 Build Error 的关键) ---
+interface CaseItem {
+  title: string;
+  desc: string;
+  articleTitle?: string;
+  articleContent?: string;
+}
+
+type CaseCategory = "civil" | "criminal" | "admin";
+
 // --- 配置区域 ---
 const AVATAR_IMAGE = "/avatar.jpg";
 const WECHAT_QR_IMAGE = "/wechat-qr.jpg";
@@ -28,7 +38,7 @@ const staggerContainer: Variants = {
 };
 
 // --- 数据配置 ---
-const casesData = {
+const casesData: Record<CaseCategory, CaseItem[]> = {
   civil: [
     { title: "人格权纠纷", desc: "名誉权、隐私权及肖像权侵权诉讼与维权。" },
     { title: "婚姻家庭/继承纠纷", desc: "离婚财产分割、子女抚养及遗产继承规划。" },
@@ -55,11 +65,11 @@ const casesData = {
 };
 
 export default function Portfolio() {
-  const [activeTab, setActiveTab] = useState<"civil" | "criminal" | "admin">("civil");
+  const [activeTab, setActiveTab] = useState<CaseCategory>("civil");
   const [showWeChat, setShowWeChat] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
-  // 使用 any 以兼容 articleTitle 等扩展属性
-  const [selectedCase, setSelectedCase] = useState<any | null>(null);
+  // 修复：使用严格类型代替 any
+  const [selectedCase, setSelectedCase] = useState<CaseItem | null>(null);
   const [isNavModalOpen, setIsNavModalOpen] = useState(false);
   
   const copyToClipboard = () => {
@@ -69,10 +79,9 @@ export default function Portfolio() {
   };
 
   return (
-    // 最外层容器：电脑端左右布局，手机端上下布局
     <div className="min-h-screen bg-[#FBFBFD] text-gray-900 font-sans selection:bg-gray-200 lg:flex">
       
-      {/* ———————— 左侧区域 (电脑端固定 / 手机端置顶) ———————— */}
+      {/* 左侧区域 */}
       <aside className="
         w-full lg:w-[30%] lg:h-screen lg:sticky lg:top-0 
         bg-[#FBFBFD] lg:bg-white lg:border-r border-gray-100 
@@ -88,6 +97,7 @@ export default function Portfolio() {
           {/* 头像 */}
           <motion.div variants={fadeInUp} className="relative group">
             <div className="absolute inset-0 bg-gray-200 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               src={AVATAR_IMAGE} 
               alt="Song Linchuan" 
@@ -95,7 +105,6 @@ export default function Portfolio() {
             />
           </motion.div>
           
-          {/* 姓名与头衔 */}
           <motion.div variants={fadeInUp} className="space-y-3 lg:space-y-4">
             <h1 className="text-3xl lg:text-3xl font-bold tracking-tight text-gray-900">宋临川</h1>
             <p className="text-sm lg:text-xs text-gray-400 font-medium tracking-[0.2em] uppercase">
@@ -106,7 +115,6 @@ export default function Portfolio() {
             </p>
           </motion.div>
 
-          {/* 社交按钮 */}
           <motion.div variants={fadeInUp} className="flex space-x-5 pt-2">
             <SocialButton icon={<MessageCircle size={18} />} label="微信" onClick={() => setShowWeChat(true)} />
             <SocialButton icon={<Phone size={18} />} label="电话" onClick={() => setShowPhone(true)} />
@@ -114,7 +122,7 @@ export default function Portfolio() {
         </motion.div>
       </aside>
 
-      {/* ———————— 右侧区域 (内容滚动) ———————— */}
+      {/* 右侧区域 */}
       <main className="w-full lg:w-[70%] bg-[#FBFBFD]">
         <motion.div 
           initial="hidden"
@@ -123,11 +131,9 @@ export default function Portfolio() {
           className="max-w-3xl mx-auto px-6 pb-20 pt-0 lg:pt-32 lg:pb-10 lg:px-16"
         >
           
-          {/* 1. 关于我 / Bio */}
+          {/* 1. 关于我 */}
           <motion.section variants={fadeInUp} className="space-y-8">
             <h2 className="text-xs font-bold text-gray-300 uppercase tracking-widest">关于我 / About</h2>
-            
-            {/* 文本两端对齐，解决右侧参差不齐的问题 */}
             <div className="text-lg lg:text-base leading-loose text-gray-600 space-y-6 text-justify break-all">
               <p>
                 生于齐鲁，少时旁观世事变迁，深感法律于个体命运之重，遂立志以法安身。
@@ -138,7 +144,7 @@ export default function Portfolio() {
             </div>
           </motion.section>
 
-          {/* 2. 我的案例 / Case Studies */}
+          {/* 2. 我的案例 */}
           <motion.section variants={fadeInUp} className="mt-32 space-y-8">
             <div className="flex items-center justify-between">
               <h2 className="text-xs font-bold text-gray-300 uppercase tracking-widest">我的案例 / Practice Areas</h2>
@@ -164,7 +170,7 @@ export default function Portfolio() {
             </div>
           </motion.section>
         
-          {/* 3. 所谓荣耀 / Honors */}
+          {/* 3. 所谓荣耀 */}
           <motion.section variants={fadeInUp} className="mt-32 mb-12 space-y-8">
             <h2 className="text-xs font-bold text-gray-300 uppercase tracking-widest">所谓荣耀 / Honors</h2>
             <div className="space-y-6 border-l border-gray-200 pl-8">
@@ -180,15 +186,11 @@ export default function Portfolio() {
             </div>
           </motion.section>
 
-          {/* 4. 页脚 / Footer */}
-          {/* 调整：px-6 (减小内边距防止挤压)，保持垂直左对齐 */}
+          {/* 4. 页脚 */}
           <motion.footer variants={fadeInUp} className="mt-32 bg-gray-50 border-t border-gray-200 text-gray-600 py-10 px-6 -mx-6 lg:mx-0 lg:rounded-xl text-sm rounded-t-3xl">
             <div className="max-w-2xl mx-auto space-y-8"> 
               
-              {/* 第一部分：联系信息 (垂直堆叠，左对齐) */}
               <div className="space-y-5">
-                
-                {/* 1. 律所名称 (保持第一) */}
                 <a 
                   href="http://www.shandonghuaifa.com" 
                   target="_blank" 
@@ -206,7 +208,6 @@ export default function Portfolio() {
                   </p>
                 </a>
 
-                {/* 2. 电话 (原老三，提拔到第二) */}
                 <a 
                   href={`tel:${PHONE_NUMBER}`}
                   className="group block w-fit"
@@ -222,7 +223,6 @@ export default function Portfolio() {
                   </p>
                 </a>
                 
-                {/* 3. 地址 (原老二，下放到最后做压舱石) */}
                 <div 
                   onClick={() => setIsNavModalOpen(true)}
                   className="group cursor-pointer block w-fit"
@@ -237,10 +237,8 @@ export default function Portfolio() {
                     (点击选择地图导航)
                   </p>
                 </div>
-                
               </div>
 
-              {/* 第二部分：版权信息 (居中) */}
               <div className="border-t border-gray-200 pt-8 text-xs text-gray-400 text-center">
                 <p className="mb-2">© 2026 宋临川律师团队. All rights reserved.</p>
                 <p>本网站内容仅供参考，不构成正式法律意见。</p>
@@ -252,11 +250,10 @@ export default function Portfolio() {
         </motion.div>
       </main>
 
-      {/* --- Modals / 弹窗组件 --- */}
-      
       {/* 微信弹窗 */}
       <Modal isOpen={showWeChat} onClose={() => setShowWeChat(false)} title="扫码添加微信">
         <div className="flex flex-col items-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={WECHAT_QR_IMAGE} alt="WeChat QR" className="w-64 h-64 object-contain rounded-lg" />
           <p className="mt-4 text-sm text-gray-500">请使用微信扫一扫</p>
         </div>
@@ -277,7 +274,7 @@ export default function Portfolio() {
         </div>
       </Modal>
 
-    {/* 案例详情弹窗 (已更新：优先显示文章内容) */}
+      {/* 案例详情弹窗 */}
       <Modal 
         isOpen={!!selectedCase} 
         onClose={() => setSelectedCase(null)} 
@@ -285,7 +282,6 @@ export default function Portfolio() {
       >
         <div className="space-y-4">
           <div className="w-8 h-1 bg-black mb-6"></div>
-          {/* 显示文章内容，若无则显示简介，支持换行 */}
           <p className="text-lg text-gray-700 leading-relaxed font-serif whitespace-pre-line">
             {selectedCase?.articleContent || selectedCase?.desc}
           </p>
@@ -336,7 +332,7 @@ export default function Portfolio() {
   );
 }
 
-// --- 子组件 (样式微调：更精致的圆角和阴影) ---
+// --- 子组件 ---
 
 function SocialButton({ icon, label, onClick }: { icon: React.ReactNode, label: string, onClick: () => void }) {
   return (
