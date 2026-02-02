@@ -2,17 +2,23 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import { Phone, MessageCircle, X, ChevronRight, Copy, MapPin, Building2 } from "lucide-react";
+import { Phone, MessageCircle, X, ChevronRight, Copy, MapPin, Building2, ChevronLeft, FileText } from "lucide-react";
 
-// --- 类型定义 (修复 Build Error 的关键) ---
-interface CaseItem {
+// --- 类型定义 ---
+// 1. 子案例（具体的文章）
+interface Article {
   title: string;
-  desc: string;
-  articleTitle?: string;
-  articleContent?: string;
+  content: string;
 }
 
-type CaseCategory = "civil" | "criminal" | "admin";
+// 2. 案由分类（外面的大卡片）
+interface CaseCategoryItem {
+  title: string;
+  desc: string;
+  articles?: Article[]; // 这是一个数组，可以放多个案例
+}
+
+type CaseType = "civil" | "criminal" | "admin";
 
 // --- 配置区域 ---
 const AVATAR_IMAGE = "/avatar.jpg";
@@ -37,8 +43,8 @@ const staggerContainer: Variants = {
   }
 };
 
-// --- 数据配置 ---
-const casesData: Record<CaseCategory, CaseItem[]> = {
+// --- 数据配置 (这里是您的案例库) ---
+const casesData: Record<CaseType, CaseCategoryItem[]> = {
   civil: [
     { title: "人格权纠纷", desc: "名誉权、隐私权及肖像权侵权诉讼与维权。" },
     { title: "婚姻家庭/继承纠纷", desc: "离婚财产分割、子女抚养及遗产继承规划。" },
@@ -48,8 +54,14 @@ const casesData: Record<CaseCategory, CaseItem[]> = {
     { 
       title: "劳动争议纠纷", 
       desc: "工伤认定、非法辞退赔偿及劳动仲裁代理。", 
-      articleTitle: "面对“碰瓷式”维权，我用合规证据链守住底线",
-      articleContent: "【案情困境】\n员工以“腰痛”为由长期不到岗，拒不提供合规医疗证明，并把公司的善意沟通视为软弱，反手提起劳动仲裁索赔5万余元。这种行为不仅侵害了企业的合法权益，更破坏了职场公平，若妥协赔钱，将给公司管理留下巨大隐患。\n\n【办案经过】\n正义需要证据支撑。我摒弃了情绪化的争辩，专注于构建严密的“合规防线”：1. 溯源“知情权”，调取入职培训签到表，证明其明知故犯；2. 固化“违纪事实”，通过梳理数十页微信催岗记录，还原公司已尽管理义务的真相；3. 庭审中厘清“医疗建议≠休假特权”的法律边界。\n\n【案件结果】\n仲裁委全面采纳代理意见，认定公司解除劳动合同合法合规，驳回对方全部金钱诉求。这不仅是一次零赔偿的胜诉，更是对“谁闹谁有理”歪风的有力回击。" 
+      // 👇 这里就是未来的扩展空间，想加案例就往这个数组里复制粘贴
+      articles: [
+        {
+          title: "面对“碰瓷式”维权，我用合规证据链守住底线",
+          content: "【案情困境】\n员工以“腰痛”为由长期不到岗，拒不提供合规医疗证明，并把公司的善意沟通视为软弱，反手提起劳动仲裁索赔5万余元。这种行为不仅侵害了企业的合法权益，更破坏了职场公平，若妥协赔钱，将给公司管理留下巨大隐患。\n\n【办案经过】\n正义需要证据支撑。我摒弃了情绪化的争辩，专注于构建严密的“合规防线”：1. 溯源“知情权”，调取入职培训签到表，证明其明知故犯；2. 固化“违纪事实”，通过梳理数十页微信催岗记录，还原公司已尽管理义务的真相；3. 庭审中厘清“医疗建议≠休假特权”的法律边界。\n\n【案件结果】\n仲裁委全面采纳代理意见，认定公司解除劳动合同合法合规，驳回对方全部金钱诉求。这不仅是一次零赔偿的胜诉，更是对“谁闹谁有理”歪风的有力回击。" 
+        },
+        // 未来如果有新案例，就在这里加逗号，继续写 { title: "...", content: "..." }
+      ]
     },
     { title: "知识产权与竞争纠纷", desc: "商标侵权、著作权保护及不正当竞争诉讼。" },
   ],
@@ -65,12 +77,34 @@ const casesData: Record<CaseCategory, CaseItem[]> = {
 };
 
 export default function Portfolio() {
-  const [activeTab, setActiveTab] = useState<CaseCategory>("civil");
+  const [activeTab, setActiveTab] = useState<CaseType>("civil");
   const [showWeChat, setShowWeChat] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
-  // 修复：使用严格类型代替 any
-  const [selectedCase, setSelectedCase] = useState<CaseItem | null>(null);
   const [isNavModalOpen, setIsNavModalOpen] = useState(false);
+
+  // --- 新的交互逻辑 ---
+  // 1. 选中的大分类 (例如：劳动争议)
+  const [selectedCategory, setSelectedCategory] = useState<CaseCategoryItem | null>(null);
+  // 2. 选中的具体文章 (例如：碰瓷维权案)
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+
+  // 打开大分类时
+  const handleCategoryClick = (item: CaseCategoryItem) => {
+    setSelectedCategory(item);
+    // 如果该分类下只有一个案例，直接打开文章详情（更智能）
+    // 如果有多个，或者没有，则显示列表
+    if (item.articles && item.articles.length === 1) {
+      setSelectedArticle(item.articles[0]);
+    } else {
+      setSelectedArticle(null);
+    }
+  };
+
+  // 关闭弹窗时，全部清空
+  const handleCloseModal = () => {
+    setSelectedCategory(null);
+    setSelectedArticle(null);
+  };
   
   const copyToClipboard = () => {
     if (typeof navigator !== "undefined") {
@@ -163,7 +197,7 @@ export default function Portfolio() {
                     key={item.title} 
                     title={item.title} 
                     desc={item.desc} 
-                    onClick={() => setSelectedCase(item)}
+                    onClick={() => handleCategoryClick(item)}
                   />
                 ))}
               </AnimatePresence>
@@ -274,22 +308,99 @@ export default function Portfolio() {
         </div>
       </Modal>
 
-      {/* 案例详情弹窗 */}
-      <Modal 
-        isOpen={!!selectedCase} 
-        onClose={() => setSelectedCase(null)} 
-        title={selectedCase?.articleTitle || selectedCase?.title || ""}
-      >
-        <div className="space-y-4">
-          <div className="w-8 h-1 bg-black mb-6"></div>
-          <p className="text-lg text-gray-700 leading-relaxed font-serif whitespace-pre-line">
-            {selectedCase?.articleContent || selectedCase?.desc}
-          </p>
-          <p className="text-xs text-gray-400 mt-6 pt-4 border-t border-gray-100">
-            * 案情细节因隐私保护已做脱敏处理
-          </p>
-        </div>
-      </Modal>
+      {/* --- 全新升级：案例详情弹窗 (支持列表+详情+滚动) --- */}
+      <AnimatePresence>
+        {selectedCategory && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={handleCloseModal} className="absolute inset-0 bg-white/80 backdrop-blur-md" 
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 10 }} 
+              animate={{ opacity: 1, scale: 1, y: 0 }} 
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              // 关键修改：max-w-2xl(加宽)，max-h-[85vh](限高)，overflow-y-auto(允许滚动)
+              className="relative bg-white rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              
+              {/* 弹窗头部：返回按钮 + 标题 + 关闭按钮 */}
+              <div className="flex justify-between items-center mb-6 sticky top-0 bg-white z-10 pb-4 border-b border-gray-50">
+                <div className="flex items-center gap-2">
+                  {/* 如果在看具体文章，显示返回按钮 */}
+                  {selectedArticle && (selectedCategory.articles?.length || 0) > 1 && (
+                    <button 
+                      onClick={() => setSelectedArticle(null)}
+                      className="p-1 rounded-full hover:bg-gray-100 text-gray-500 transition"
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                  )}
+                  <h3 className="text-xl font-bold text-gray-900 tracking-tight">
+                    {selectedArticle ? "案例详情" : selectedCategory.title}
+                  </h3>
+                </div>
+                <button onClick={handleCloseModal} className="p-2 rounded-full hover:bg-gray-50 text-gray-400 hover:text-black transition"><X size={20}/></button>
+              </div>
+
+              {/* 弹窗内容区域 */}
+              <div className="flex-1">
+                
+                {/* 场景A：显示具体文章内容 */}
+                {selectedArticle ? (
+                  <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                     <h2 className="text-2xl font-bold text-gray-900 leading-tight">
+                        {selectedArticle.title}
+                     </h2>
+                     <div className="w-12 h-1 bg-black"></div>
+                     <p className="text-lg text-gray-700 leading-relaxed font-serif whitespace-pre-line text-justify">
+                        {selectedArticle.content}
+                     </p>
+                     <p className="text-xs text-gray-400 pt-8 mt-8 border-t border-gray-100">
+                        * 案情细节因隐私保护已做脱敏处理
+                     </p>
+                  </div>
+
+                ) : (
+                  
+                  // 场景B：显示案例列表 (或者是默认简介)
+                  <div className="space-y-6">
+                    {/* 默认简介 */}
+                    <p className="text-gray-500 text-sm mb-4">{selectedCategory.desc}</p>
+                    
+                    {/* 如果有案例列表，显示列表 */}
+                    {selectedCategory.articles && selectedCategory.articles.length > 0 ? (
+                      <div className="space-y-3">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">精选案例 / Featured Cases</p>
+                        {selectedCategory.articles.map((article, index) => (
+                          <div 
+                            key={index}
+                            onClick={() => setSelectedArticle(article)}
+                            className="group p-4 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-black hover:shadow-md transition-all cursor-pointer flex items-center justify-between"
+                          >
+                            <div className="flex items-center gap-3">
+                               <FileText size={18} className="text-gray-400 group-hover:text-black transition-colors"/>
+                               <span className="font-medium text-gray-700 group-hover:text-black">{article.title}</span>
+                            </div>
+                            <ChevronRight size={16} className="text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-transform"/>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      // 如果没有案例，显示占位符
+                      <div className="py-10 text-center text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                        暂无公开案例详情
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* 导航菜单弹窗 */}
       <AnimatePresence>
@@ -388,6 +499,7 @@ function HonorItem({ children }: { children: React.ReactNode }) {
   );
 }
 
+// 基础弹窗（用于微信和电话）
 function Modal({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) {
   if (!isOpen) return null;
   return (
