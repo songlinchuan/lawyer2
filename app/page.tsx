@@ -35,7 +35,12 @@ const casesData = {
     { title: "物权纠纷", desc: "不动产确权、所有权争议及相邻关系处理。" },
     { title: "合同纠纷", desc: "买卖、租赁、借款等各类合同违约与索赔。" },
     { title: "侵权责任纠纷", desc: "交通事故、医疗损害及其他人身财产损害赔偿。" },
-    { title: "劳动争议纠纷", desc: "工伤认定、非法辞退赔偿及劳动仲裁代理。" },
+   { 
+      title: "劳动争议纠纷", 
+      desc: "工伤认定、非法辞退赔偿及劳动仲裁代理。", 
+      articleTitle: "面对“碰瓷式”维权，我用合规证据链守住底线",
+      articleContent: "【案情困境】\n员工以“腰痛”为由长期不到岗，拒不提供合规医疗证明，并把公司的善意沟通视为软弱，反手提起劳动仲裁索赔5万余元。这种行为不仅侵害了企业的合法权益，更破坏了职场公平，若妥协赔钱，将给公司管理留下巨大隐患。\n\n【办案经过】\n正义需要证据支撑。我摒弃了情绪化的争辩，专注于构建严密的“合规防线”：1. 溯源“知情权”，调取入职培训签到表，证明其明知故犯；2. 固化“违纪事实”，通过梳理数十页微信催岗记录，还原公司已尽管理义务的真相；3. 庭审中厘清“医疗建议≠休假特权”的法律边界。\n\n【案件结果】\n仲裁委全面采纳代理意见，认定公司解除劳动合同合法合规，驳回对方全部金钱诉求。这不仅是一次零赔偿的胜诉，更是对“谁闹谁有理”歪风的有力回击。" 
+    },
     { title: "知识产权与竞争纠纷", desc: "商标侵权、著作权保护及不正当竞争诉讼。" },
   ],
   criminal: [
@@ -273,12 +278,18 @@ export default function Portfolio() {
         </div>
       </Modal>
 
-      {/* 案例详情弹窗 */}
-      <Modal isOpen={!!selectedCase} onClose={() => setSelectedCase(null)} title={selectedCase?.title || ""}>
+     {/* 案例详情弹窗 (升级版：支持显示独立案例故事) */}
+      <Modal 
+        isOpen={!!selectedCase} 
+        onClose={() => setSelectedCase(null)} 
+        // 逻辑：如果有“文章标题”，就显示文章标题；否则显示“卡片标题”
+        title={selectedCase?.articleTitle || selectedCase?.title || ""}
+      >
         <div className="space-y-4">
           <div className="w-8 h-1 bg-black mb-6"></div>
-          <p className="text-lg text-gray-700 leading-relaxed font-serif">
-            {selectedCase?.desc}
+          {/* 逻辑：如果有“文章内容”，就显示文章内容；否则显示“卡片简介” */}
+          <p className="text-lg text-gray-700 leading-relaxed font-serif whitespace-pre-line">
+            {selectedCase?.articleContent || selectedCase?.desc}
           </p>
           <p className="text-xs text-gray-400 mt-6 pt-4 border-t border-gray-100">
             * 案情细节因隐私保护已做脱敏处理
