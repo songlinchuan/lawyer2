@@ -58,7 +58,7 @@ export default function Portfolio() {
   const [activeTab, setActiveTab] = useState<"civil" | "criminal" | "admin">("civil");
   const [showWeChat, setShowWeChat] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
-  const [selectedCase, setSelectedCase] = useState<{title: string, desc: string} | null>(null);
+  const [selectedCase, setSelectedCase] = useState<any | null>(null);
   const [isNavModalOpen, setIsNavModalOpen] = useState(false);
   
   const copyToClipboard = () => {
