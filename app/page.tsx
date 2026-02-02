@@ -35,7 +35,7 @@ const casesData = {
     { title: "物权纠纷", desc: "不动产确权、所有权争议及相邻关系处理。" },
     { title: "合同纠纷", desc: "买卖、租赁、借款等各类合同违约与索赔。" },
     { title: "侵权责任纠纷", desc: "交通事故、医疗损害及其他人身财产损害赔偿。" },
-   { 
+    { 
       title: "劳动争议纠纷", 
       desc: "工伤认定、非法辞退赔偿及劳动仲裁代理。", 
       articleTitle: "面对“碰瓷式”维权，我用合规证据链守住底线",
@@ -58,6 +58,7 @@ export default function Portfolio() {
   const [activeTab, setActiveTab] = useState<"civil" | "criminal" | "admin">("civil");
   const [showWeChat, setShowWeChat] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
+  // 使用 any 以兼容 articleTitle 等扩展属性
   const [selectedCase, setSelectedCase] = useState<any | null>(null);
   const [isNavModalOpen, setIsNavModalOpen] = useState(false);
   
@@ -181,8 +182,6 @@ export default function Portfolio() {
 
           {/* 4. 页脚 / Footer */}
           {/* 调整：px-6 (减小内边距防止挤压)，保持垂直左对齐 */}
-         {/* 4. 页脚 / Footer */}
-          {/* 调整：px-6 (减小内边距防止挤压)，保持垂直左对齐 */}
           <motion.footer variants={fadeInUp} className="mt-32 bg-gray-50 border-t border-gray-200 text-gray-600 py-10 px-6 -mx-6 lg:mx-0 lg:rounded-xl text-sm rounded-t-3xl">
             <div className="max-w-2xl mx-auto space-y-8"> 
               
@@ -253,7 +252,7 @@ export default function Portfolio() {
         </motion.div>
       </main>
 
-      {/* --- Modals / 弹窗组件 (保持不变) --- */}
+      {/* --- Modals / 弹窗组件 --- */}
       
       {/* 微信弹窗 */}
       <Modal isOpen={showWeChat} onClose={() => setShowWeChat(false)} title="扫码添加微信">
@@ -278,16 +277,15 @@ export default function Portfolio() {
         </div>
       </Modal>
 
-    {/* 案例详情弹窗 (修改后) */}
+    {/* 案例详情弹窗 (已更新：优先显示文章内容) */}
       <Modal 
         isOpen={!!selectedCase} 
         onClose={() => setSelectedCase(null)} 
-        // 👇 变化1：优先显示文章标题
         title={selectedCase?.articleTitle || selectedCase?.title || ""}
       >
         <div className="space-y-4">
           <div className="w-8 h-1 bg-black mb-6"></div>
-          {/* 👇 变化2：优先显示文章内容，且支持换行 */}
+          {/* 显示文章内容，若无则显示简介，支持换行 */}
           <p className="text-lg text-gray-700 leading-relaxed font-serif whitespace-pre-line">
             {selectedCase?.articleContent || selectedCase?.desc}
           </p>
