@@ -278,16 +278,16 @@ export default function Portfolio() {
         </div>
       </Modal>
 
-     {/* 案例详情弹窗 (升级版：支持显示独立案例故事) */}
+    {/* 案例详情弹窗 (修改后) */}
       <Modal 
         isOpen={!!selectedCase} 
         onClose={() => setSelectedCase(null)} 
-        // 逻辑：如果有“文章标题”，就显示文章标题；否则显示“卡片标题”
+        // 👇 变化1：优先显示文章标题
         title={selectedCase?.articleTitle || selectedCase?.title || ""}
       >
         <div className="space-y-4">
           <div className="w-8 h-1 bg-black mb-6"></div>
-          {/* 逻辑：如果有“文章内容”，就显示文章内容；否则显示“卡片简介” */}
+          {/* 👇 变化2：优先显示文章内容，且支持换行 */}
           <p className="text-lg text-gray-700 leading-relaxed font-serif whitespace-pre-line">
             {selectedCase?.articleContent || selectedCase?.desc}
           </p>
