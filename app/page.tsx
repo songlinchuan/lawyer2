@@ -104,10 +104,11 @@ export default function Portfolio() {
             </div>
           </motion.section>
 
-          {/* 案例展示 (带筛选 + 自动截断) */}
+        {/* 案例展示板块：已修改为“亲办案例” */}
           <motion.section variants={fadeInUp} className="mt-20 space-y-6">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-xs font-bold text-gray-300 uppercase tracking-widest">精选案例 / Featured Cases</h2>
+              {/* ✅ 标题修改处 */}
+              <h2 className="text-xs font-bold text-gray-300 uppercase tracking-widest">亲办案例 / Cases Handled</h2>
             </div>
 
             {/* 分类筛选栏 */}
@@ -139,7 +140,7 @@ export default function Portfolio() {
               </AnimatePresence>
             </motion.div>
             
-            {/* 查看更多按钮 */}
+            {/* 查看更多按钮 (仅当还有剩余案例时显示) */}
             {visibleCount < filteredCases.length && (
               <div className="flex justify-center pt-4">
                 <button onClick={() => setVisibleCount(prev => prev + 4)} className="group flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-black hover:border-black transition-all shadow-sm hover:shadow-md active:scale-95">
