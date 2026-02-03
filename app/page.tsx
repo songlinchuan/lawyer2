@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import { Phone, MessageCircle, X, ChevronRight, Copy, MapPin, Building2, ChevronLeft, FileText } from "lucide-react";
-// 引入我们刚才创建的数据文件
+import { Phone, MessageCircle, X, ChevronRight, Copy, MapPin, Building2, ChevronLeft, FileText, Filter } from "lucide-react";
+// 引入数据
 import { casesData } from './data';
 
 // --- 配置区域 ---
@@ -25,23 +25,40 @@ const staggerContainer: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1 }
+    transition: { staggerChildren: 0.05 } // 调快一点，让列表出现更迅速
   }
 };
 
 export default function Portfolio() {
-  // 基础弹窗状态
   const [showWeChat, setShowWeChat] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
   const [isNavModalOpen, setIsNavModalOpen] = useState(false);
-
-  // --- 新的交互逻辑：选中案例 ---
   const [selectedCaseId, setSelectedCaseId] = useState<string | number | null>(null);
 
-  // 查找当前选中的案例数据
+  // --- 核心升级：分类筛选逻辑 ---
+  const [activeCategory, setActiveCategory] = useState("全部");
+
+  // 1. 自动从数据中提取所有唯一的标签(tag)，并加上"全部"
+  const categories = useMemo(() => {
+    // 提取所有tag
+    const allTags = casesData.map(item => item.tag);
+    // 去重
+    const uniqueTags = Array.from(new Set(allTags));
+    // 返回 ["全部", "劳动争议", "合同纠纷"...]
+    return ["全部", ...uniqueTags];
+  }, []);
+
+  // 2. 根据当前选中的分类，过滤出要显示的案例
+  const filteredCases = useMemo(() => {
+    if (activeCategory === "全部") {
+      return casesData;
+    }
+    return casesData.filter(item => item.tag === activeCategory);
+  }, [activeCategory]);
+
+  // 查找当前选中的案例详情
   const activeCase = casesData.find(c => c.id === selectedCaseId);
   
-  // 关闭弹窗
   const handleCloseModal = () => {
     setSelectedCaseId(null);
   };
@@ -56,7 +73,7 @@ export default function Portfolio() {
   return (
     <div className="min-h-screen bg-[#FBFBFD] text-gray-900 font-sans selection:bg-gray-200 lg:flex">
       
-      {/* 左侧区域 (侧边栏) */}
+      {/* 左侧区域 */}
       <aside className="
         w-full lg:w-[30%] lg:h-screen lg:sticky lg:top-0 
         bg-[#FBFBFD] lg:bg-white lg:border-r border-gray-100 
@@ -97,7 +114,7 @@ export default function Portfolio() {
         </motion.div>
       </aside>
 
-      {/* 右侧区域 (主要内容) */}
+      {/* 右侧区域 */}
       <main className="w-full lg:w-[70%] bg-[#FBFBFD]">
         <motion.div 
           initial="hidden"
@@ -119,27 +136,69 @@ export default function Portfolio() {
             </div>
           </motion.section>
 
-          {/* 2. 我的案例 (列表展示) */}
-          <motion.section variants={fadeInUp} className="mt-32 space-y-8">
-            <div className="flex items-center justify-between">
+          {/* 2. 我的案例 (带筛选栏) */}
+          <motion.section variants={fadeInUp} className="mt-20 space-y-6">
+            <div className="flex items-center justify-between mb-2">
               <h2 className="text-xs font-bold text-gray-300 uppercase tracking-widest">精选案例 / Featured Cases</h2>
             </div>
 
-            {/* 案例网格 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <AnimatePresence mode="wait">
-                {casesData.map((item) => (
-                  <CaseCard 
-                    key={item.id} 
-                    tag={item.tag}
-                    title={item.title} 
-                    // 自动截取一段内容作为简介，并去掉可能的换行符
-                    desc={item.content.substring(0, 50).replace(/[\n\r]/g, '') + "..."} 
-                    onClick={() => setSelectedCaseId(item.id)}
-                  />
+            {/* --- 分类筛选栏 (横向滚动) --- */}
+            <div className="flex overflow-x-auto pb-4 -mx-6 px-6 lg:mx-0 lg:px-0 gap-3 scrollbar-hide">
+              {categories.map((cat) => {
+                 // 计算该分类下的数量
+                 const count = cat === "全部" ? casesData.length : casesData.filter(c => c.tag === cat).length;
+                 const isActive = activeCategory === cat;
+                 
+                 return (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`
+                      flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap
+                      ${isActive 
+                        ? "bg-black text-white shadow-lg scale-105" 
+                        : "bg-white text-gray-400 hover:bg-gray-100 border border-gray-100"}
+                    `}
+                  >
+                    {cat} <span className={`ml-1 text-xs ${isActive ? "text-gray-300" : "text-gray-300"}`}>{count}</span>
+                  </button>
+                 );
+              })}
+            </div>
+
+            {/* 案例网格 (根据筛选结果显示) */}
+            <motion.div 
+              layout // 加上这个属性，列表变化时会有丝滑的排版动画
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredCases.map((item) => (
+                  <motion.div
+                    key={item.id}
+                    layout // 让卡片移动时有动画
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <CaseCard 
+                      tag={item.tag}
+                      title={item.title} 
+                      desc={item.content.substring(0, 50).replace(/[\n\r]/g, '') + "..."} 
+                      onClick={() => setSelectedCaseId(item.id)}
+                    />
+                  </motion.div>
                 ))}
               </AnimatePresence>
-            </div>
+            </motion.div>
+            
+            {/* 如果筛选后没有数据 (通常不会发生，但为了健壮性) */}
+            {filteredCases.length === 0 && (
+              <div className="text-center py-10 text-gray-400 text-sm">
+                该分类下暂无案例
+              </div>
+            )}
+
           </motion.section>
         
           {/* 3. 所谓荣耀 */}
@@ -248,42 +307,36 @@ export default function Portfolio() {
         </div>
       </Modal>
 
-    {/* 案例详情弹窗 (UI 升级版：固定头部 + 独立滚动) */}
+      {/* 案例详情弹窗 (UI 升级版：固定头部 + 独立滚动) */}
       <AnimatePresence>
         {selectedCaseId && activeCase && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-            {/* 1. 背景遮罩 (点击关闭) */}
+            {/* 背景遮罩 */}
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              onClick={handleCloseModal} 
-              className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-colors" 
+              onClick={handleCloseModal} className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-colors" 
             />
             
-            {/* 2. 弹窗主体卡片 */}
+            {/* 弹窗主体 */}
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 20 }} 
               animate={{ opacity: 1, scale: 1, y: 0 }} 
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              onClick={(e) => e.stopPropagation()} // 防止点击卡片关闭
-              // 关键修改：flex flex-col 让头部和内容垂直排列，max-h-[85vh] 限制最大高度
+              onClick={(e) => e.stopPropagation()}
               className="relative bg-white w-full max-w-2xl max-h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
             >
               
-              {/* --- A. 头部区域 (固定不动) --- */}
+              {/* 头部 (固定) */}
               <div className="flex-none bg-white p-5 border-b border-gray-100 flex justify-between items-start z-10">
-                <div className="pr-8"> {/* 右侧留白给关闭按钮 */}
-                   {/* 案由标签 (美化版) */}
+                <div className="pr-8">
                    <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-md border border-blue-100 mb-2">
                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
                      {activeCase.tag}
                    </span>
-                   {/* 标题移到头部，这样用户一眼就能看到重点 */}
                    <h2 className="text-xl md:text-2xl font-bold text-gray-900 leading-snug">
                     {activeCase.title}
                    </h2>
                 </div>
-                
-                {/* 关闭按钮 */}
                 <button 
                   onClick={handleCloseModal} 
                   className="flex-shrink-0 p-2 -mr-2 -mt-2 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-900 transition-colors"
@@ -292,28 +345,23 @@ export default function Portfolio() {
                 </button>
               </div>
 
-              {/* --- B. 内容区域 (只有这里滚动) --- */}
+              {/* 内容 (滚动) */}
               <div className="flex-1 overflow-y-auto p-6 md:p-8 bg-white scroll-smooth">
-                  
-                  {/* 正文内容 */}
                   <div className="text-lg text-gray-700 leading-loose font-serif whitespace-pre-line text-justify space-y-4">
-                    {/* 我们给内容加一点装饰性的首字下沉或段落间距 */}
                     {activeCase.content}
                   </div>
                   
-                  {/* 底部免责声明 */}
                   <div className="mt-10 pt-6 border-t border-dashed border-gray-200">
                     <p className="text-xs text-gray-400 flex items-center gap-1">
                       <FileText size={12}/> 案情细节因隐私保护已做脱敏处理，仅供参考。
                     </p>
                   </div>
 
-                  {/* 底部行动按钮 */}
                   <button 
                     onClick={() => window.location.href = `tel:${PHONE_NUMBER}`}
                     className="mt-6 w-full bg-slate-900 hover:bg-slate-800 text-white py-3.5 rounded-xl font-bold text-center active:scale-95 transition-all shadow-lg shadow-slate-200"
                   >
-                   联系宋律师咨询此类案件
+                   联系律师咨询此类案件
                  </button>
               </div>
 
@@ -379,17 +427,13 @@ function SocialButton({ icon, label, onClick }: { icon: React.ReactNode, label: 
   );
 }
 
-// 升级版 CaseCard：支持显示 tag (案由)
 function CaseCard({ title, desc, tag, onClick }: { title: string, desc: string, tag: string, onClick: () => void }) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
       whileHover={{ y: -2 }}
       onClick={onClick}
-      className="group p-6 rounded-xl border border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer flex flex-col items-start"
+      className="group p-6 rounded-xl border border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer flex flex-col items-start h-full"
     >
-      {/* 案由标签 */}
       <div className="mb-3">
          <span className="inline-block bg-blue-50 text-blue-600 text-[10px] px-2 py-1 rounded font-bold">
            {tag}
@@ -402,7 +446,7 @@ function CaseCard({ title, desc, tag, onClick }: { title: string, desc: string, 
         </h3>
       </div>
       
-      <p className="text-xs text-gray-400 leading-relaxed line-clamp-3 mb-2">
+      <p className="text-xs text-gray-400 leading-relaxed line-clamp-3 mb-4 flex-1">
         {desc}
       </p>
 
@@ -423,7 +467,6 @@ function HonorItem({ children }: { children: React.ReactNode }) {
   );
 }
 
-// 基础弹窗（用于微信和电话）
 function Modal({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) {
   if (!isOpen) return null;
   return (
