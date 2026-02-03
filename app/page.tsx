@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import { Phone, MessageCircle, X, ChevronRight, Copy, MapPin, Building2, ChevronLeft, FileText, Filter } from "lucide-react";
+import { Phone, MessageCircle, X, ChevronRight, Copy, MapPin, Building2, ChevronLeft, FileText, ArrowDown } from "lucide-react";
 // 引入数据
 import { casesData } from './data';
 
@@ -10,6 +10,7 @@ import { casesData } from './data';
 const AVATAR_IMAGE = "/avatar.jpg";
 const WECHAT_QR_IMAGE = "/wechat-qr.jpg";
 const PHONE_NUMBER = "15665792073";
+const INITIAL_DISPLAY_COUNT = 6; // ✅ 默认只显示 6 个案例，手机端不累
 
 // --- 动画配置 ---
 const fadeInUp: Variants = {
@@ -25,7 +26,7 @@ const staggerContainer: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.05 } // 调快一点，让列表出现更迅速
+    transition: { staggerChildren: 0.05 }
   }
 };
 
@@ -35,25 +36,35 @@ export default function Portfolio() {
   const [isNavModalOpen, setIsNavModalOpen] = useState(false);
   const [selectedCaseId, setSelectedCaseId] = useState<string | number | null>(null);
 
-  // --- 核心升级：分类筛选逻辑 ---
+  // --- 分类筛选逻辑 ---
   const [activeCategory, setActiveCategory] = useState("全部");
+  
+  // --- ✅ 新增：控制显示数量的逻辑 ---
+  const [visibleCount, setVisibleCount] = useState(INITIAL_DISPLAY_COUNT);
 
-  // 1. 自动从数据中提取所有唯一的标签(tag)，并加上"全部"
+  // 1. 自动提取标签
   const categories = useMemo(() => {
-    // 提取所有tag
     const allTags = casesData.map(item => item.tag);
-    // 去重
     const uniqueTags = Array.from(new Set(allTags));
-    // 返回 ["全部", "劳动争议", "合同纠纷"...]
     return ["全部", ...uniqueTags];
   }, []);
 
-  // 2. 根据当前选中的分类，过滤出要显示的案例
+  // 2. 过滤案例
   const filteredCases = useMemo(() => {
     if (activeCategory === "全部") {
       return casesData;
     }
     return casesData.filter(item => item.tag === activeCategory);
+  }, [activeCategory]);
+
+  // 3. ✅ 实际上展示的案例（根据 visibleCount 切割）
+  const displayedCases = useMemo(() => {
+    return filteredCases.slice(0, visibleCount);
+  }, [filteredCases, visibleCount]);
+
+  // ✅ 当切换分类时，重置显示数量，让用户总是从头看起
+  useEffect(() => {
+    setVisibleCount(INITIAL_DISPLAY_COUNT);
   }, [activeCategory]);
 
   // 查找当前选中的案例详情
@@ -136,19 +147,17 @@ export default function Portfolio() {
             </div>
           </motion.section>
 
-          {/* 2. 我的案例 (带筛选栏) */}
+          {/* 2. 我的案例 (带筛选栏 + 查看更多) */}
           <motion.section variants={fadeInUp} className="mt-20 space-y-6">
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-xs font-bold text-gray-300 uppercase tracking-widest">精选案例 / Featured Cases</h2>
             </div>
 
-            {/* --- 分类筛选栏 (横向滚动) --- */}
+            {/* --- 分类筛选栏 --- */}
             <div className="flex overflow-x-auto pb-4 -mx-6 px-6 lg:mx-0 lg:px-0 gap-3 scrollbar-hide">
               {categories.map((cat) => {
-                 // 计算该分类下的数量
                  const count = cat === "全部" ? casesData.length : casesData.filter(c => c.tag === cat).length;
                  const isActive = activeCategory === cat;
-                 
                  return (
                   <button
                     key={cat}
@@ -166,16 +175,16 @@ export default function Portfolio() {
               })}
             </div>
 
-            {/* 案例网格 (根据筛选结果显示) */}
+            {/* 案例网格 (只显示 displayedCases) */}
             <motion.div 
-              layout // 加上这个属性，列表变化时会有丝滑的排版动画
+              layout 
               className="grid grid-cols-1 md:grid-cols-2 gap-4"
             >
               <AnimatePresence mode="popLayout">
-                {filteredCases.map((item) => (
+                {displayedCases.map((item) => (
                   <motion.div
                     key={item.id}
-                    layout // 让卡片移动时有动画
+                    layout
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
@@ -192,7 +201,20 @@ export default function Portfolio() {
               </AnimatePresence>
             </motion.div>
             
-            {/* 如果筛选后没有数据 (通常不会发生，但为了健壮性) */}
+            {/* ✅ 查看更多按钮 (只有当还有剩余案例时才显示) */}
+            {visibleCount < filteredCases.length && (
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={() => setVisibleCount(prev => prev + 4)} // 每次多加载 4 个
+                  className="group flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-black hover:border-black transition-all shadow-sm hover:shadow-md active:scale-95"
+                >
+                  查看更多案例
+                  <ArrowDown size={14} className="group-hover:translate-y-1 transition-transform"/>
+                </button>
+              </div>
+            )}
+            
+            {/* 无数据提示 */}
             {filteredCases.length === 0 && (
               <div className="text-center py-10 text-gray-400 text-sm">
                 该分类下暂无案例
@@ -307,7 +329,7 @@ export default function Portfolio() {
         </div>
       </Modal>
 
-      {/* 案例详情弹窗 (UI 升级版：固定头部 + 独立滚动) */}
+      {/* 案例详情弹窗 (固定头部 + 独立滚动) */}
       <AnimatePresence>
         {selectedCaseId && activeCase && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
@@ -395,98 +417,4 @@ export default function Portfolio() {
               <div className="flex flex-col">
                 <a href="https://uri.amap.com/marker?position=117.11906,36.65756&name=山东怀法律师事务所&coordinate=Gaode" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors">高德地图</a>
                 <a href="http://api.map.baidu.com/marker?location=36.6636,117.1255&title=山东怀法律师事务所&content=山东省济南市历下区城投环贸中心C座6号楼1801室&output=html" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors">百度地图</a>
-                <a href="https://apis.map.qq.com/uri/v1/search?keyword=山东怀法律师事务所&region=济南" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors">腾讯地图</a>
-                <a href="http://maps.apple.com/?q=山东怀法律师事务所&address=山东省济南市历下区城投环贸中心C座" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 transition-colors">苹果地图</a>
-              </div>
-
-              <div className="bg-gray-100 p-2">
-                <button onClick={() => setIsNavModalOpen(false)} className="w-full py-3 bg-white rounded-xl text-gray-600 font-bold shadow-sm hover:bg-gray-50 transition-colors">取消</button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-    </div>
-  );
-}
-
-// --- 子组件 ---
-
-function SocialButton({ icon, label, onClick }: { icon: React.ReactNode, label: string, onClick: () => void }) {
-  return (
-    <motion.button 
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      onClick={onClick}
-      className="p-3 bg-white border border-gray-100 rounded-full text-gray-400 hover:text-black hover:border-black transition-all duration-300"
-      aria-label={label}
-    >
-      {icon}
-    </motion.button>
-  );
-}
-
-function CaseCard({ title, desc, tag, onClick }: { title: string, desc: string, tag: string, onClick: () => void }) {
-  return (
-    <motion.div
-      whileHover={{ y: -2 }}
-      onClick={onClick}
-      className="group p-6 rounded-xl border border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer flex flex-col items-start h-full"
-    >
-      <div className="mb-3">
-         <span className="inline-block bg-blue-50 text-blue-600 text-[10px] px-2 py-1 rounded font-bold">
-           {tag}
-         </span>
-      </div>
-      
-      <div className="flex w-full justify-between items-start mb-2">
-        <h3 className="font-bold text-gray-800 group-hover:text-black transition-colors leading-snug">
-          {title}
-        </h3>
-      </div>
-      
-      <p className="text-xs text-gray-400 leading-relaxed line-clamp-3 mb-4 flex-1">
-        {desc}
-      </p>
-
-      <div className="mt-auto pt-2 flex items-center text-gray-300 group-hover:text-blue-600 text-xs font-medium transition-colors">
-         <span>查看详情</span>
-         <ChevronRight size={12} className="ml-1" />
-      </div>
-    </motion.div>
-  );
-}
-
-function HonorItem({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="relative">
-      <div className="absolute -left-[37px] top-2 w-2 h-2 bg-gray-200 rounded-full ring-4 ring-white"></div>
-      <p className="text-gray-600 leading-relaxed text-sm">{children}</p>
-    </div>
-  );
-}
-
-function Modal({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) {
-  if (!isOpen) return null;
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <motion.div 
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        onClick={onClose} className="absolute inset-0 bg-white/80 backdrop-blur-md" 
-      />
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 10 }} 
-        animate={{ opacity: 1, scale: 1, y: 0 }} 
-        exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="relative bg-white rounded-2xl w-full max-w-sm p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100"
-      >
-        <div className="flex justify-between items-center mb-8">
-          <h3 className="text-lg font-bold text-gray-900 tracking-tight">{title}</h3>
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-50 text-gray-400 hover:text-black transition"><X size={18}/></button>
-        </div>
-        {children}
-      </motion.div>
-    </div>
-  );
-}
+                <a href="https://apis.map.qq.com/uri/v1/
