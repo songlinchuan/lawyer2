@@ -248,55 +248,70 @@ export default function Portfolio() {
         </div>
       </Modal>
 
-      {/* 案例详情弹窗 (全新) */}
+    {/* 案例详情弹窗 (UI 升级版：固定头部 + 独立滚动) */}
       <AnimatePresence>
         {selectedCaseId && activeCase && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* 背景遮罩 */}
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            {/* 1. 背景遮罩 (点击关闭) */}
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              onClick={handleCloseModal} className="absolute inset-0 bg-white/80 backdrop-blur-md" 
+              onClick={handleCloseModal} 
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-colors" 
             />
-            {/* 弹窗卡片 */}
+            
+            {/* 2. 弹窗主体卡片 */}
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 10 }} 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }} 
               animate={{ opacity: 1, scale: 1, y: 0 }} 
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative bg-white rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 flex flex-col"
-              onClick={(e) => e.stopPropagation()}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              onClick={(e) => e.stopPropagation()} // 防止点击卡片关闭
+              // 关键修改：flex flex-col 让头部和内容垂直排列，max-h-[85vh] 限制最大高度
+              className="relative bg-white w-full max-w-2xl max-h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
             >
               
-              {/* 头部：案由标签 + 关闭按钮 */}
-              <div className="flex justify-between items-start mb-6 sticky top-0 bg-white z-10 pb-4 border-b border-gray-50">
-                <div>
-                   <span className="inline-block bg-blue-50 text-blue-600 text-xs px-2 py-1 rounded font-bold mb-2">
+              {/* --- A. 头部区域 (固定不动) --- */}
+              <div className="flex-none bg-white p-5 border-b border-gray-100 flex justify-between items-start z-10">
+                <div className="pr-8"> {/* 右侧留白给关闭按钮 */}
+                   {/* 案由标签 (美化版) */}
+                   <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-md border border-blue-100 mb-2">
+                     <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
                      {activeCase.tag}
                    </span>
+                   {/* 标题移到头部，这样用户一眼就能看到重点 */}
+                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 leading-snug">
+                    {activeCase.title}
+                   </h2>
                 </div>
-                <button onClick={handleCloseModal} className="p-2 rounded-full hover:bg-gray-50 text-gray-400 hover:text-black transition">
-                  <X size={20}/>
+                
+                {/* 关闭按钮 */}
+                <button 
+                  onClick={handleCloseModal} 
+                  className="flex-shrink-0 p-2 -mr-2 -mt-2 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                >
+                  <X size={24}/>
                 </button>
               </div>
 
-              {/* 内容区域 */}
-              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                  <h2 className="text-2xl font-bold text-gray-900 leading-tight">
-                    {activeCase.title}
-                  </h2>
-                  <div className="w-12 h-1 bg-black"></div>
+              {/* --- B. 内容区域 (只有这里滚动) --- */}
+              <div className="flex-1 overflow-y-auto p-6 md:p-8 bg-white scroll-smooth">
                   
-                  {/* 正文：保留换行符，两端对齐 */}
-                  <div className="text-lg text-gray-700 leading-relaxed font-serif whitespace-pre-line text-justify">
+                  {/* 正文内容 */}
+                  <div className="text-lg text-gray-700 leading-loose font-serif whitespace-pre-line text-justify space-y-4">
+                    {/* 我们给内容加一点装饰性的首字下沉或段落间距 */}
                     {activeCase.content}
                   </div>
                   
-                  <p className="text-xs text-gray-400 pt-8 mt-8 border-t border-gray-100">
-                    * 案情细节因隐私保护已做脱敏处理
-                  </p>
+                  {/* 底部免责声明 */}
+                  <div className="mt-10 pt-6 border-t border-dashed border-gray-200">
+                    <p className="text-xs text-gray-400 flex items-center gap-1">
+                      <FileText size={12}/> 案情细节因隐私保护已做脱敏处理，仅供参考。
+                    </p>
+                  </div>
 
+                  {/* 底部行动按钮 */}
                   <button 
                     onClick={() => window.location.href = `tel:${PHONE_NUMBER}`}
-                    className="w-full bg-slate-900 text-white py-3 rounded-xl font-bold text-center active:scale-95 transition-transform mt-4"
+                    className="mt-6 w-full bg-slate-900 hover:bg-slate-800 text-white py-3.5 rounded-xl font-bold text-center active:scale-95 transition-all shadow-lg shadow-slate-200"
                   >
                    联系宋律师咨询此类案件
                  </button>
