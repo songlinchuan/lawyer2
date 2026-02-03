@@ -247,19 +247,45 @@ export default function Portfolio() {
         )}
       </AnimatePresence>
 
-      {/* 导航菜单弹窗 */}
+    {/* 导航菜单弹窗 (最终版：手机端贴底通栏 + 电脑端悬浮卡片) */}
       <AnimatePresence>
         {isNavModalOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center sm:items-center p-4" onClick={() => setIsNavModalOpen(false)}>
-            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 300 }} className="bg-white w-full max-w-sm rounded-2xl sm:rounded-2xl overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()}>
-              <div className="p-4 border-b border-gray-100 text-center"><h3 className="text-sm font-bold text-gray-500">选择地图导航</h3></div>
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            // 1. 去掉 p-4 和 pb-6，让它能紧贴边缘。保留 sm:items-center 让电脑端居中
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center sm:items-center sm:p-4"
+            onClick={() => setIsNavModalOpen(false)}
+          >
+            <motion.div 
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              // 2. 关键修改：
+              // - w-full: 手机上占满宽度
+              // - sm:max-w-sm: 电脑上限制宽度，不然太丑
+              // - rounded-t-2xl: 手机上只圆上面 (像抽屉)
+              // - sm:rounded-2xl: 电脑上四周都圆 (像卡片)
+              className="bg-white w-full sm:max-w-sm rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-4 border-b border-gray-100 text-center">
+                <h3 className="text-sm font-bold text-gray-500">选择地图导航</h3>
+              </div>
+              
               <div className="flex flex-col">
                 <a href="https://uri.amap.com/marker?position=117.11906,36.65756&name=山东怀法律师事务所&coordinate=Gaode" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors">高德地图</a>
                 <a href="http://api.map.baidu.com/marker?location=36.6636,117.1255&title=山东怀法律师事务所&content=山东省济南市历下区城投环贸中心C座6号楼1801室&output=html" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors">百度地图</a>
                 <a href="https://apis.map.qq.com/uri/v1/search?keyword=山东怀法律师事务所&region=济南" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors">腾讯地图</a>
                 <a href="http://maps.apple.com/?q=山东怀法律师事务所&address=山东省济南市历下区城投环贸中心C座" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 transition-colors">苹果地图</a>
               </div>
-              <div className="bg-gray-100 p-2"><button onClick={() => setIsNavModalOpen(false)} className="w-full py-3 bg-white rounded-xl text-gray-600 font-bold shadow-sm hover:bg-gray-50 transition-colors">取消</button></div>
+
+              {/* 底部取消按钮，加了 pb-safe 适配 iPhone 底部横条 */}
+              <div className="bg-gray-100 p-2 pb-6 sm:pb-2">
+                <button onClick={() => setIsNavModalOpen(false)} className="w-full py-3 bg-white rounded-xl text-gray-600 font-bold shadow-sm hover:bg-gray-50 transition-colors">取消</button>
+              </div>
             </motion.div>
           </motion.div>
         )}
