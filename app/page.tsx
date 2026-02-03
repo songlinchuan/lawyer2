@@ -57,7 +57,7 @@ const casesData: Record<CaseType, CaseCategoryItem[]> = {
       ]
     },
     {
-      title: "婚姻家庭/继承纠纷",
+      title: "婚姻家庭、继承纠纷",
       desc: "离婚财产分割、子女抚养及遗产继承规划。",
       articles: [
         {
