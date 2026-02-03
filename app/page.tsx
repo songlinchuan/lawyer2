@@ -298,7 +298,7 @@ export default function Portfolio() {
                     onClick={() => window.location.href = `tel:${PHONE_NUMBER}`}
                     className="w-full bg-slate-900 text-white py-3 rounded-xl font-bold text-center active:scale-95 transition-transform mt-4"
                   >
-                   联系律师咨询此类案件
+                   联系宋律师咨询此类案件
                  </button>
               </div>
 
