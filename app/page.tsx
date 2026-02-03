@@ -68,7 +68,7 @@ const casesData: Record<CaseType, CaseCategoryItem[]> = {
     },
     { title: "物权纠纷", desc: "不动产确权、所有权争议及相邻关系处理。" },
    {
-      title: "合同纠纷",
+      title: "合同、不当得利纠纷",
       desc: "买卖、租赁、借款等各类合同违约与索赔。",
       articles: [
         {
