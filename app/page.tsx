@@ -243,7 +243,7 @@ export default function Portfolio() {
                   <div className="mt-10 pt-6 border-t border-dashed border-gray-200">
                     <p className="text-xs text-gray-400 flex items-center gap-1"><FileText size={12}/> 案情细节因隐私保护已做脱敏处理，仅供参考。</p>
                   </div>
-                  <button onClick={() => window.location.href = `tel:${PHONE_NUMBER}`} className="mt-6 w-full bg-slate-900 hover:bg-slate-800 text-white py-3.5 rounded-xl font-bold text-center active:scale-95 transition-all shadow-lg shadow-slate-200">联系律师咨询此类案件</button>
+                  <button onClick={() => window.location.href = `tel:${PHONE_NUMBER}`} className="mt-6 w-full bg-slate-900 hover:bg-slate-800 text-white py-3.5 rounded-xl font-bold text-center active:scale-95 transition-all shadow-lg shadow-slate-200">联系宋律师咨询此类案件</button>
               </div>
             </motion.div>
           </div>
