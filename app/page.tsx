@@ -10,7 +10,7 @@ import { casesData } from './data';
 const AVATAR_IMAGE = "/avatar.jpg"; 
 const WECHAT_QR_IMAGE = "/wechat-qr.jpg"; 
 const PHONE_NUMBER = "15665792073";
-const INITIAL_DISPLAY_COUNT = 6; 
+const INITIAL_DISPLAY_COUNT = 6; // 默认显示 6 个
 
 // --- 动画配置 ---
 const fadeInUp: Variants = {
@@ -36,16 +36,19 @@ export default function Portfolio() {
   const [isNavModalOpen, setIsNavModalOpen] = useState(false);
   const [selectedCaseId, setSelectedCaseId] = useState<string | number | null>(null);
 
-  // --- 分类筛选逻辑 ---
+  // --- 分类筛选与数量控制逻辑 ---
   const [activeCategory, setActiveCategory] = useState("全部");
   const [visibleCount, setVisibleCount] = useState(INITIAL_DISPLAY_COUNT);
 
   const categories = useMemo(() => {
+    // 防崩溃保护：如果数据没加载好，返回默认值
+    if (!casesData) return ["全部"];
     const allTags = casesData.map(item => item.tag);
     return ["全部", ...Array.from(new Set(allTags))];
   }, []);
 
   const filteredCases = useMemo(() => {
+    if (!casesData) return [];
     if (activeCategory === "全部") return casesData;
     return casesData.filter(item => item.tag === activeCategory);
   }, [activeCategory]);
@@ -58,7 +61,7 @@ export default function Portfolio() {
     setVisibleCount(INITIAL_DISPLAY_COUNT);
   }, [activeCategory]);
 
-  const activeCase = casesData.find(c => c.id === selectedCaseId);
+  const activeCase = casesData?.find(c => c.id === selectedCaseId);
   const handleCloseModal = () => setSelectedCaseId(null);
   
   const copyToClipboard = () => {
@@ -104,17 +107,16 @@ export default function Portfolio() {
             </div>
           </motion.section>
 
-        {/* 案例展示板块：已修改为“亲办案例” */}
+          {/* 案例展示 (亲办案例) */}
           <motion.section variants={fadeInUp} className="mt-20 space-y-6">
             <div className="flex items-center justify-between mb-2">
-              {/* ✅ 标题修改处 */}
               <h2 className="text-xs font-bold text-gray-300 uppercase tracking-widest">亲办案例 / Cases Handled</h2>
             </div>
 
             {/* 分类筛选栏 */}
             <div className="flex overflow-x-auto pb-4 -mx-6 px-6 lg:mx-0 lg:px-0 gap-3 scrollbar-hide">
               {categories.map((cat) => {
-                 const count = cat === "全部" ? casesData.length : casesData.filter(c => c.tag === cat).length;
+                 const count = !casesData ? 0 : (cat === "全部" ? casesData.length : casesData.filter(c => c.tag === cat).length);
                  const isActive = activeCategory === cat;
                  return (
                   <button key={cat} onClick={() => setActiveCategory(cat)} className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap ${isActive ? "bg-black text-white shadow-lg scale-105" : "bg-white text-gray-400 hover:bg-gray-100 border border-gray-100"}`}>
@@ -140,7 +142,7 @@ export default function Portfolio() {
               </AnimatePresence>
             </motion.div>
             
-            {/* 查看更多按钮 (仅当还有剩余案例时显示) */}
+            {/* 查看更多按钮 */}
             {visibleCount < filteredCases.length && (
               <div className="flex justify-center pt-4">
                 <button onClick={() => setVisibleCount(prev => prev + 4)} className="group flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-black hover:border-black transition-all shadow-sm hover:shadow-md active:scale-95">
@@ -248,14 +250,13 @@ export default function Portfolio() {
         )}
       </AnimatePresence>
 
-    {/* 导航菜单弹窗 (最终版：手机端贴底通栏 + 电脑端悬浮卡片) */}
+      {/* 导航菜单弹窗 (已修复：链接完整，防断尾) */}
       <AnimatePresence>
         {isNavModalOpen && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            // 1. 去掉 p-4 和 pb-6，让它能紧贴边缘。保留 sm:items-center 让电脑端居中
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center sm:items-center sm:p-4"
             onClick={() => setIsNavModalOpen(false)}
           >
@@ -264,11 +265,6 @@ export default function Portfolio() {
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              // 2. 关键修改：
-              // - w-full: 手机上占满宽度
-              // - sm:max-w-sm: 电脑上限制宽度，不然太丑
-              // - rounded-t-2xl: 手机上只圆上面 (像抽屉)
-              // - sm:rounded-2xl: 电脑上四周都圆 (像卡片)
               className="bg-white w-full sm:max-w-sm rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
@@ -283,7 +279,6 @@ export default function Portfolio() {
                 <a href="http://maps.apple.com/?q=山东怀法律师事务所&address=山东省济南市历下区城投环贸中心C座" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 transition-colors">苹果地图</a>
               </div>
 
-              {/* 底部取消按钮，加了 pb-safe 适配 iPhone 底部横条 */}
               <div className="bg-gray-100 p-2 pb-6 sm:pb-2">
                 <button onClick={() => setIsNavModalOpen(false)} className="w-full py-3 bg-white rounded-xl text-gray-600 font-bold shadow-sm hover:bg-gray-50 transition-colors">取消</button>
               </div>
