@@ -164,20 +164,20 @@ export default function Portfolio() {
             </div>
           </motion.section>
 
-         <motion.footer variants={fadeInUp} className="mt-32 bg-gray-50 border-t border-gray-200 text-gray-600 py-10 px-6 -mx-6 lg:mx-0 lg:rounded-xl text-sm rounded-t-3xl">
+        <motion.footer variants={fadeInUp} className="mt-32 bg-gray-50 border-t border-gray-200 text-gray-600 py-10 px-6 -mx-6 lg:mx-0 lg:rounded-xl text-sm rounded-t-3xl">
             <div className="max-w-2xl mx-auto space-y-8"> 
               <div className="space-y-5">
                 
-                {/* 1. 律所名称 (过渡状态，取消链接) */}
-                <div className="group block w-fit cursor-default">
+                {/* 1. 律所名称 (已更新为新律所，恢复官网链接) */}
+                <a href="http://www.jkclawyer.com" target="_blank" rel="noopener noreferrer" className="group block w-fit">
                   <div className="flex items-center gap-3">
-                    <Building2 size={18} className="text-gray-400" />
-                    <h4 className="text-gray-600 font-bold text-base">执业机构变更办理中</h4>
+                    <Building2 size={18} className="text-gray-900" />
+                    <h4 className="text-gray-900 font-bold text-base group-hover:text-blue-600 transition-colors">山东敬可成律师事务所</h4>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1 pl-8">过渡期间，正常接待法律咨询</p>
-                </div>
+                  <p className="text-xs text-gray-400 mt-1 pl-8 group-hover:text-gray-600 transition-colors">(点击访问律所官网)</p>
+                </a>
 
-                {/* 2. 电话 (保持不变，正常可用) */}
+                {/* 2. 电话 (保持不变) */}
                 <a href={`tel:${PHONE_NUMBER}`} className="group block w-fit">
                   <div className="flex items-center gap-3">
                     <Phone size={18} className="flex-shrink-0 text-gray-400 group-hover:text-green-500 transition-colors" />
@@ -186,13 +186,13 @@ export default function Portfolio() {
                   <p className="text-xs text-gray-400 mt-1 pl-8 group-hover:text-gray-600 transition-colors">(点击拨打或复制 · 手机号同微信)</p>
                 </a>
 
-                {/* 3. 地址与导航 (过渡状态，取消地图弹窗) */}
-                <div className="group block w-fit cursor-default">
+                {/* 3. 地址与导航 (已更新为新地址，恢复弹窗功能) */}
+                <div onClick={() => setIsNavModalOpen(true)} className="group cursor-pointer block w-fit">
                   <div className="flex items-start gap-3">
-                    <MapPin size={18} className="mt-0.5 flex-shrink-0 text-gray-400" />
-                    <p className="leading-relaxed text-gray-600">济南新办公地址筹备中</p>
+                    <MapPin size={18} className="mt-0.5 flex-shrink-0 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                    <p className="leading-relaxed text-gray-600 group-hover:text-gray-900">山东省济南市高新区新泺大街2008号银荷大厦C座<span className="whitespace-nowrap">702室</span></p>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1 pl-8">如有面谈需求，请先微信或电话联系</p>
+                  <p className="text-xs text-gray-400 mt-1 pl-8 group-hover:text-gray-600 transition-colors">(点击选择地图导航)</p>
                 </div>
 
               </div>
@@ -279,11 +279,11 @@ export default function Portfolio() {
                 <h3 className="text-sm font-bold text-gray-500">选择地图导航</h3>
               </div>
               
-              <div className="flex flex-col">
-                <a href="https://uri.amap.com/marker?position=117.11906,36.65756&name=山东怀法律师事务所&coordinate=Gaode" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors">高德地图</a>
-                <a href="http://api.map.baidu.com/marker?location=36.6636,117.1255&title=山东怀法律师事务所&content=山东省济南市历下区城投环贸中心C座6号楼1801室&output=html" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors">百度地图</a>
-                <a href="https://apis.map.qq.com/uri/v1/search?keyword=山东怀法律师事务所&region=济南" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors">腾讯地图</a>
-                <a href="http://maps.apple.com/?q=山东怀法律师事务所&address=山东省济南市历下区城投环贸中心C座" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 transition-colors">苹果地图</a>
+            <div className="flex flex-col">
+                <a href="https://uri.amap.com/search?keyword=山东敬可成律师事务所&city=济南" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors">高德地图</a>
+                <a href="http://api.map.baidu.com/search?query=山东敬可成律师事务所&region=济南&output=html" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors">百度地图</a>
+                <a href="https://apis.map.qq.com/uri/v1/search?keyword=山东敬可成律师事务所&region=济南" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 border-b border-gray-100 transition-colors">腾讯地图</a>
+                <a href="http://maps.apple.com/?q=山东敬可成律师事务所&address=山东省济南市高新区新泺大街2008号银荷大厦C座" target="_blank" className="py-4 text-center text-gray-800 font-medium hover:bg-gray-50 transition-colors">苹果地图</a>
               </div>
 
               <div className="bg-gray-100 p-2 pb-6 sm:pb-2">
